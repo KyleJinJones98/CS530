@@ -1,0 +1,12 @@
+Symbol  Value   Flags:
+-----------------------
+FIRST   000000  R
+LOOP    00000A  R
+COUNT   00001D  R
+TABLE   000023  R
+TABLE2  0007F3  R
+TOTAL   000FC3  R
+
+Name    Literal   Address:
+------------------------------
+MYLIT   =C'EOF'   0FC6
