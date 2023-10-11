@@ -1,8 +1,9 @@
 #include <string>
 #include <unordered_map>
 #include <iostream>
-#include <sstream>
 #include "hexConverter.h"
+
+//Handles functionality related to the opcode table including checking for valid opcodes, and encoding opcodes
 
 //TODO ADD FULL OPCODETABLE
 //
@@ -43,6 +44,7 @@ std::string encodeOpcode(std::string opcode, bool nflag, bool iflag){
 
     return opcodeNumber;
 }
+
 //Expected output: 6D 03 20 0 1
 int main(){
     std::cout<<encodeOpcode("LDS",false,true)<<std::endl;
