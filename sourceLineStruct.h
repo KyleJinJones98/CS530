@@ -1,5 +1,5 @@
-#ifndef HEADER_FILE_NAME
-#define HEADER_FILE_NAME
+#ifndef sourceLineStruct
+#define sourceLineStruct
 #include <sstream>
 #include <string>
 #include <vector>
