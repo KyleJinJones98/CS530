@@ -8,7 +8,6 @@
 struct symbol{
     std::string value;
     bool absoluteFlag; // false = relative true = absolute
-    
 };
 
 struct literal{
@@ -16,17 +15,22 @@ struct literal{
     std:: string address;
 };
 
+//tracks symbols in the source code
 std::unordered_map<std::string, symbol> symbolTable{
   };
 
+//tracks literals in the source code
 std::unordered_map<std::string, literal> literalTable{
   };
 
+//add a new literal to the literalTable
+//However, does not define its address, which is assumed to be defined later
 void addLiteral(std::string literalName, std::string literalValue){
     literal newLiteral =  {literalValue, ""};
     literalTable[literalName] = newLiteral;
 }
 
+//Adds the address that the assembler automatically assigned to a literal to its value in the table
 void addLiteralAddress(std::string literalName, std::string literalAddress){
     if(literalTable.at(literalName).address!=""){
         std::cerr << "Double address assignment to literal: " <<literalName<< std::endl;
