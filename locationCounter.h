@@ -1,5 +1,5 @@
-#ifndef locationCounter
-#define locationCounter
+#ifndef locationCounter_H
+#define locationCounter_H
 
 #include <string>
 

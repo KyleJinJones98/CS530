@@ -1,5 +1,5 @@
-#ifndef hexConverter
-#define hexConverter
+#ifndef hexConverter_H
+#define hexConverter_H
 #include <sstream>
 #include <string>
 #include <iomanip>
