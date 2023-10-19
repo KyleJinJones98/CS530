@@ -1,37 +1,13 @@
-#include <string>
-#include <unordered_map>
-#include <iostream>
-
-//handles functionality related to the symbol table including updating symbol values, getting values, and writing the symbol table to a file
-
-
-struct symbol{
-    std::string value;
-    bool absoluteFlag; // false = relative true = absolute
-};
-
-struct literal{
-    std:: string value;
-    std:: string address;
-};
-
-//tracks symbols in the source code
-std::unordered_map<std::string, symbol> symbolTable{
-  };
-
-//tracks literals in the source code
-std::unordered_map<std::string, literal> literalTable{
-  };
-
+#include "symbolTable.h"
 //add a new literal to the literalTable
 //However, does not define its address, which is assumed to be defined later
-void addLiteral(std::string literalName, std::string literalValue){
+void SymbolTable::addLiteral(std::string literalName, std::string literalValue){
     literal newLiteral =  {literalValue, ""};
     literalTable[literalName] = newLiteral;
 }
 
 //Adds the address that the assembler automatically assigned to a literal to its value in the table
-void addLiteralAddress(std::string literalName, std::string literalAddress){
+void SymbolTable::addLiteralAddress(std::string literalName, std::string literalAddress){
     if(literalTable.at(literalName).address!=""){
         std::cerr << "Double address assignment to literal: " <<literalName<< std::endl;
     }
@@ -39,13 +15,13 @@ void addLiteralAddress(std::string literalName, std::string literalAddress){
 }
 
 //adds a new symbol to the symboltable
-void addSymbol(std::string symbolName, std::string symbolValue, bool isAbsolute){
+void SymbolTable::addSymbol(std::string symbolName, std::string symbolValue, bool isAbsolute){
     symbol newSymbol = {symbolValue, isAbsolute};
     symbolTable[symbolName] = newSymbol;
 }
 
 //returns whether the given symbol is an absolute or relative value
-std::string getSymbolValue(std::string symbolName){
+std::string SymbolTable::getSymbolValue(std::string symbolName){
     try
     {
         return symbolTable.at(symbolName).value;
@@ -72,7 +48,7 @@ std::string getSymbolValue(std::string symbolName){
 }
 
 //used when creating a literal pool
-std::string getLiteralValue(std::string literalName){
+std::string SymbolTable::getLiteralValue(std::string literalName){
         try
     {
         return literalTable.at(literalName).value;
@@ -86,7 +62,7 @@ std::string getLiteralValue(std::string literalName){
 }
 
 //returns whether the given symbol is an absolute or relative value
-bool isAbsolute(std::string symbolName){
+bool SymbolTable::isAbsolute(std::string symbolName){
     try
     {
         return symbolTable.at(symbolName).absoluteFlag;
@@ -104,12 +80,13 @@ bool isAbsolute(std::string symbolName){
 //Expected Results: 00000, 0, 00FE, Undefined Symbol: Star 
 //As well as exit code =3 due to exiting early
 int main(){
-        addSymbol("Start", "00000", false);
-        std::cout<<getSymbolValue("Start")<<std::endl;
-        std::cout<<isAbsolute("Start")<<std::endl;
-        addLiteral("MyLit", "=C'EOF'" );
-        addLiteralAddress("MyLit", "00FE");
-        std::cout<<getSymbolValue("MyLit")<<std::endl;
-        std::cout<<getSymbolValue("Star")<<std::endl;
-        std::cout<<getSymbolValue("MyLit")<<std::endl;
+        SymbolTable sym;
+        sym.addSymbol("Start", "00000", false);
+        std::cout<<sym.getSymbolValue("Start")<<std::endl;
+        std::cout<<sym.isAbsolute("Start")<<std::endl;
+        sym.addLiteral("MyLit", "=C'EOF'" );
+        sym.addLiteralAddress("MyLit", "00FE");
+        std::cout<<sym.getSymbolValue("MyLit")<<std::endl;
+        std::cout<<sym.getSymbolValue("Star")<<std::endl;
+        std::cout<<sym.getSymbolValue("MyLit")<<std::endl;
 }
