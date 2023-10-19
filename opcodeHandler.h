@@ -11,5 +11,9 @@
 std::string encodeOpcode(std::string opcode, bool nflag, bool iflag);
 bool checkOpcode(std::string opcode);
 std::string encodeOpcode(std::string opcode, bool nflag, bool iflag);
+int getOpcodeFormat(std::string opcode);
+int getOpcodeSize(std::string opcode);
+std::string normalizeOpcode(std::string opcode);
+
 
 #endif

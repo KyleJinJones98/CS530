@@ -16,7 +16,7 @@ std::unordered_map<std::string, std::string> opcodeTable{
 //checks if a string is a valid opcode
 bool checkOpcode(std::string opcode){
     //if opcode in opcode table return true
-    auto opcodeNumber = opcodeTable.find(opcode);
+    auto opcodeNumber = opcodeTable.find(normalizeOpcode(opcode));
     if(opcodeNumber!= opcodeTable.end()){
         return true;
     }
@@ -26,7 +26,8 @@ bool checkOpcode(std::string opcode){
 
 //returns the given opcode as a hex string
 std::string encodeOpcode(std::string opcode, bool nflag, bool iflag){
-    std::string opcodeNumber = opcodeTable[opcode];
+    
+    std::string opcodeNumber = opcodeTable[normalizeOpcode(opcode)];
 
     //add to our opcode integer here to set n and i flags
     //if n should be set we add +2
@@ -39,6 +40,28 @@ std::string encodeOpcode(std::string opcode, bool nflag, bool iflag){
     }
 
     return opcodeNumber;
+}
+
+//returns the number of Bytes used up by the opcode
+int getOpcodeSize(std::string opcode){
+    //if it is extended return 4, otherwise we return 3
+    if(opcode[0]=='+'){
+        return 4;
+    }
+    return 3;
+}
+
+int getOpcodeFormat(std::string opcode){
+    //Stub need to convert opcodes to structs to track format as well
+    return 1;
+}
+
+//gets rid of the + at the beginning of opcodes to they can be properly searched
+std::string normalizeOpcode(std::string opcode){
+    if(opcode[0]=='+'){
+        return opcode.substr(1);
+    }
+    return opcode;
 }
 
 //Expected output: 6D 03 20 0 1
