@@ -1,5 +1,5 @@
-#ifndef locationCounter_H
-#define locationCounter_H
+#ifndef symbolTable_H
+#define symbolTable_H
 
 #include <string>
 #include <unordered_map>
