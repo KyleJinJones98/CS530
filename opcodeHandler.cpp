@@ -1,8 +1,4 @@
-#include <string>
-#include <unordered_map>
-#include <iostream>
-#include "hexConverter.h"
-
+#include "opcodeHandler.h"
 //Handles functionality related to the opcode table including checking for valid opcodes, and encoding opcodes
 
 //TODO ADD FULL OPCODETABLE
