@@ -4,6 +4,7 @@
 #include "symbolTable.h"
 #include <string>
 #include <vector>
+#include <iostream>
 
 //Implements the operations during the first pass of the assembler
 
@@ -21,8 +22,9 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines){
     
     //set defaults based on first line contents
     LocationCounter locctr = LocationCounter(firstLine.targetAddress);
+    firstLine.lineAddress = locctr.getLocationCounter();
     output.push_back(firstLine);
-    //updateSymbolTable(firstline.label)
+    symtab.addSymbol(firstLine.label, firstLine.lineAddress, true);
 
     for(int i = 1; i<sourceLines.size(); i++){
         sourceLineStruct currentLine = sourceLineStruct();
@@ -30,19 +32,31 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines){
         currentLine.lineAddress = locctr.getLocationCounter();//assign address to current line of source
 
         if(currentLine.label != "" && currentLine.targetAddress.find("=")== std::string::npos){ //check if label is defined and is not a literal
-            //addSymbol(currentLine.label,currentLine.lineAddress, true);
+            symtab.addSymbol(currentLine.label,currentLine.lineAddress, true);
         }
         else if(currentLine.targetAddress.find("=")!= std::string::npos){//check if a literal was defined
-            //addLiteral(currentLine.label, currentLine.targetAddress);
+            symtab.addLiteral(currentLine.label, currentLine.targetAddress);
         } 
 
-        //checkOpcode(currentLine.operation)
-        //getOpcodeSize(currentLine.targetAddress)
-        //checkDirective(currentLine.operation) //check for + flag
-        //if true handleDirective(currentLine.operation, currentLine.targetAddress, locctr)
+        //if the instruction is an opcode, we can just account for its size and move on
+        if(checkOpcode(currentLine.operation)){
+            int bytes = getOpcodeSize(currentLine.operation);
+            locctr.incrementLocationCounter(bytes);
+        }
+        //check and handle directive here
+        else if(false){
+            //if true handleDirective(currentLine.operation, currentLine.targetAddress, locctr)
 
-        //increment locctr
+            //increment locctr if directive requires it
+        }
+        else{
+            throw "Unregocnized command: "+ currentLine.operation+ " at line: "+ std::to_string(i)+"\n";
+        }
     }
     return output;
+}
+
+int main(){
+    std::cout<<"TEST"<<std::endl;
 }
 
