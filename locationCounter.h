@@ -2,6 +2,7 @@
 #define locationCounter_H
 
 #include <string>
+#include "hexConverter.h"
 
 class LocationCounter{
     

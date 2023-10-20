@@ -75,18 +75,3 @@ bool SymbolTable::isAbsolute(std::string symbolName){
     }
     
 }
-
-//some simple error tests
-//Expected Results: 00000, 0, 00FE, Undefined Symbol: Star 
-//As well as exit code =3 due to exiting early
-int main(){
-        SymbolTable sym;
-        sym.addSymbol("Start", "00000", false);
-        std::cout<<sym.getSymbolValue("Start")<<std::endl;
-        std::cout<<sym.isAbsolute("Start")<<std::endl;
-        sym.addLiteral("MyLit", "=C'EOF'" );
-        sym.addLiteralAddress("MyLit", "00FE");
-        std::cout<<sym.getSymbolValue("MyLit")<<std::endl;
-        std::cout<<sym.getSymbolValue("Star")<<std::endl;
-        std::cout<<sym.getSymbolValue("MyLit")<<std::endl;
-}

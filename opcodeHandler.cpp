@@ -63,12 +63,3 @@ std::string normalizeOpcode(std::string opcode){
     }
     return opcode;
 }
-
-//Expected output: 6D 03 20 0 1
-int main(){
-    std::cout<<encodeOpcode("LDS",false,true)<<std::endl;
-    std::cout<<encodeOpcode("LDA",true,true)<<std::endl;
-    std::cout<<encodeOpcode("MUL",false,false)<<std::endl;
-    std::cout<<checkOpcode("ALU")<<std::endl;
-    std::cout<<checkOpcode("MUL")<<std::endl;
-}

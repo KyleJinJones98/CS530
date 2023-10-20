@@ -11,6 +11,7 @@ struct sourceLineStruct
     std::string targetAddress; //stores the address the line of source targets
     std::string lineAddress; // the address of the line of source, to be assigned during pass 1
 
+    //used to deconstruct a line of source and assign values
     void getLineComponents(std::string sourceLine){
     std::string word;
     std::vector<std::string> components;

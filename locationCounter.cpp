@@ -1,6 +1,5 @@
 #include "locationCounter.h"
 
-#include "hexConverter.h"
 
 
 LocationCounter::LocationCounter()
