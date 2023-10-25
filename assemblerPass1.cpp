@@ -17,7 +17,9 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines){
     firstLine.getLineComponents(sourceLines[0]);
     //do error checking to ensure program is started correctly
     if(firstLine.operation!="START"){
-        throw "Program not started with correct opcode: Start. \n Incorrect opcode: "+firstLine.operation;
+        std::cout<<"Program not started with correct opcode: Start. \n Incorrect opcode: "+firstLine.operation + "\n";
+       //throw "Program not started with correct opcode: Start. \n Incorrect opcode: "+firstLine.operation + "\n";
+       exit(3);
     }
     
     //set defaults based on first line contents
@@ -26,7 +28,7 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines){
     output.push_back(firstLine);
     symtab.addSymbol(firstLine.label, firstLine.lineAddress, true);
 
-    for(int i = 1; i<sourceLines.size(); i++){
+    for(int i = 1; i<(sourceLines.size()-1); i++){
         sourceLineStruct currentLine = sourceLineStruct();
         currentLine.getLineComponents(sourceLines[i]); //extract the line components from the current source line
         currentLine.lineAddress = locctr.getLocationCounter();//assign address to current line of source
@@ -50,13 +52,31 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines){
             //increment locctr if directive requires it
         }
         else{
-            throw "Unregocnized command: "+ currentLine.operation+ " at line: "+ std::to_string(i)+"\n";
+            std::cout<<"Unregocnized command: "+ currentLine.operation+ " at line: "+ std::to_string(i)+"\n";
+            //throw "Unregocnized command: "+ currentLine.operation+ " at line: "+ std::to_string(i)+"\n";
+            exit(3);
         }
+
+        //append the proccessed line struct
+        output.push_back(currentLine);
     }
+
+    //once all lines have been processed we may need to resolve symbol values
+    //As well as assign any unassigned literals, we would do this by "adding" a line
+    //e.g for the example we would add a sourcelinestruct with the values
+    //line address = 0FC6 label =*      targetaddress = =C'EOF'             
+
+    //process the last line which should have the value of end
+    
     return output;
 }
 
 int main(){
+    std::vector<std::string> testLines = {"SUM      START   0","FIRST    LDX    #0","LDA    #0", "+LDB    #TABLE2  ", "END     FIRST"};
+    std::vector<sourceLineStruct> testOutput = pass1(testLines);
     std::cout<<"TEST"<<std::endl;
+    for (int i=0; i<=testOutput.size(); i++){
+        testOutput[i].printLine();
+    }
 }
 

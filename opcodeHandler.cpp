@@ -10,7 +10,9 @@ std::unordered_map<std::string, std::string> opcodeTable{
     {"MUL","20"},
     {"ADD","18"},
     {"LDA","00"},
-    {"LDS","6C"}
+    {"LDS","6C"},
+    {"LDX","04"},
+    {"LDB","68"}
   };
   
 //checks if a string is a valid opcode
