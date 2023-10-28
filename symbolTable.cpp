@@ -75,3 +75,49 @@ bool SymbolTable::isAbsolute(std::string symbolName){
     }
     
 }
+
+//instantiates literals starting at the given address
+void SymbolTable::instantiateLiterals(LocationCounter locctr, std::vector<sourceLineStruct> output)
+{
+    //regex is here to isolate the type and value of the literal
+    std::regex literalRegex("=[C,X]'(.*)'");
+    for(auto literal : literalTable) {
+        sourceLineStruct currentLiteral = sourceLineStruct();
+        std::string literalDefinition = literal.second.value;
+        std::smatch isolatedValue;
+        while(std::regex_search(literalDefinition,isolatedValue,literalRegex)){
+            if(isolatedValue.size()!=1){
+                std::cout<<"Error Parsing Literal: "+literalDefinition<<std::endl;
+                exit(3);
+            }
+
+            std::string isolatedLiteral = isolatedValue.str(0);
+            //if the literal is a charstring we need to convert to ascii and then to hex first
+            if(literalDefinition[1]=='C'){
+                isolatedLiteral = toHex(isolatedLiteral,6);
+            }
+            //if the literal is hexstring then its value does not need to be further modified
+            else if(literalDefinition[1]=='X'){
+                //just make sure we have the appropriate number of preceeding 0's
+               isolatedLiteral= toHex(toDec(isolatedLiteral),6);
+            }
+            else{
+                std::cout<<"Error Parsing Literal: "+literalDefinition<<std::endl;
+                exit(3);
+            }
+            //update the literaltable
+            literalTable[literal.first].value=isolatedLiteral;
+            literalTable[literal.first].address = locctr.getLocationCounter();
+            //finish literal initialization
+            currentLiteral.lineAddress = locctr.getLocationCounter();
+            currentLiteral.label = '*';
+            currentLiteral.hexInstruction = isolatedLiteral;
+            //add literal to sourcelines and increment locctr
+            output.push_back(currentLiteral);
+            locctr.incrementLocationCounter(3);
+
+        }
+
+    } 
+
+}

@@ -4,6 +4,12 @@
 #include <string>
 #include <unordered_map>
 #include <iostream>
+#include "sourceLineStruct.h"
+#include <vector>
+#include "locationCounter.h"
+#include <regex>
+#include <iostream>
+#include "hexConverter.h"
 
 //handles functionality related to the symbol table including updating symbol values, getting values, and writing the symbol table to a file
 
@@ -35,7 +41,8 @@ public:
   std::string getSymbolValue(std::string symbolName);
   std::string getLiteralValue(std::string literalName);
   bool isAbsolute(std::string symbolName);
-    
+  void instantiateLiterals(LocationCounter locctr, std::vector<sourceLineStruct> output);
+
 };
 
 #endif
