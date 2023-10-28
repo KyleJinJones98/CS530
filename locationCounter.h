@@ -13,6 +13,7 @@ class LocationCounter{
         LocationCounter(std::string startingaddress);
         std::string getLocationCounter();
         void incrementLocationCounter(int i);
+        void setLocationCounter(int i);
 };
 
 
