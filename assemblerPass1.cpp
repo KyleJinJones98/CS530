@@ -52,7 +52,7 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
             //if true handleDirective(currentLine.operation, currentLine.targetAddress, locctr)
             handleDirective(currentLine.operation, currentLine.targetAddress, locctr, symtab, output);
             //increment locctr if directive requires it
-            int bytes = getDirectiveSize(currentLine.operation, currentLine.targetAddress);
+            int bytes = getDirectiveSize(symtab,currentLine.operation, currentLine.targetAddress);
             locctr.incrementLocationCounter(bytes);
         }
         else{
@@ -89,7 +89,7 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
 int main(){
     SymbolTable symtab;
     std::vector<std::string> testLines = {"SUM      START   0","FIRST    LDX    #0","LDA    #0", "+LDB    #TABLE2  ", "MYLIT    LDA    =C'E'", "LIT    LDA    =C'EOF'",
-    "COUNT    RESW    5", "    ORG    10","END     FIRST"};
+    "COUNT    RESW    5", "    ORG    FIRST","END     FIRST"};
     std::vector<sourceLineStruct> testOutput = pass1(testLines,symtab);
     std::cout<<"TEST"<<std::endl;
     for (unsigned int i=0; i<testOutput.size(); i++){

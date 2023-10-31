@@ -35,7 +35,12 @@ void handleDirective(std::string operation, std::string targetAddress, LocationC
         symtab.instantiateLiterals(locctr,output);
     //we reset the location counter to the given address
     case Directive::ORG:
-        locctr.setLocationCounter(toDec(targetAddress));
+        if(symtab.isSymbol(targetAddress)){
+            locctr.setLocationCounter(toDec(symtab.getSymbolValue(targetAddress)));
+        }
+        else{
+            locctr.setLocationCounter(std::stoi(targetAddress));
+        }
     default:
         break;
     }
@@ -43,15 +48,27 @@ void handleDirective(std::string operation, std::string targetAddress, LocationC
 
 //returns the given directive's size
 //if the directive does not take up space returns 0
-int getDirectiveSize(std::string operation, std::string targetAddress)
+int getDirectiveSize(SymbolTable symtab, std::string operation, std::string targetAddress)
 {
     Directive directiveEnum = directiveTable[operation];
-    int size = std::stoi(targetAddress);
+    int size;
     switch (directiveEnum)
     {
     case Directive::RESB:
+        if(symtab.isSymbol(targetAddress)){
+            size = toDec(symtab.getSymbolValue(targetAddress));
+        }
+        else{
+            size = std::stoi(targetAddress);
+        }
         return size;
     case Directive::RESW:
+        if(symtab.isSymbol(targetAddress)){
+            size = toDec(symtab.getSymbolValue(targetAddress));
+        }
+        else{
+            size = std::stoi(targetAddress);
+        }
         return size*3;
     case Directive::BYTE:
         return 1;

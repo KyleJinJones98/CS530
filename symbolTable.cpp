@@ -59,7 +59,7 @@ bool SymbolTable::isSymbol(std::string symbolName){
         //throws an undefined symbol exception, but might be better to include line/address symbol was found at 
     catch(const std::out_of_range& e)
     {
-       \return false;
+       return false;
     }
 }
 
@@ -100,7 +100,7 @@ void SymbolTable::instantiateLiterals(LocationCounter& locctr, std::vector<sourc
     for(auto literal : literalTable) {
 
         //only assign literals who have no assigned address
-        if(literal.second.address!=""){
+        if(literal.second.address==""){
         sourceLineStruct currentLiteral = sourceLineStruct();
         std::string literalDefinition = literal.second.value;
         std::smatch isolatedValue;
