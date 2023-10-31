@@ -6,14 +6,6 @@ void SymbolTable::addLiteral(std::string literalName, std::string literalValue){
     literalTable[literalName] = newLiteral;
 }
 
-//Adds the address that the assembler automatically assigned to a literal to its value in the table
-void SymbolTable::addLiteralAddress(std::string literalName, std::string literalAddress){
-    if(literalTable.at(literalName).address!=""){
-        std::cerr << "Double address assignment to literal: " <<literalName<< std::endl;
-    }
-    literalTable.at(literalName).address=literalAddress;
-}
-
 //adds a new symbol to the symboltable
 void SymbolTable::addSymbol(std::string symbolName, std::string symbolValue, bool isAbsolute){
     symbol newSymbol = {symbolValue, isAbsolute};
@@ -47,7 +39,31 @@ std::string SymbolTable::getSymbolValue(std::string symbolName){
     }
 }
 
-//used when creating a literal pool
+//returns true if a symbol or literal is in the symtab
+bool SymbolTable::isSymbol(std::string symbolName){
+        try
+    {
+        symbolTable.at(symbolName);
+        return true;
+    }
+    catch(const std::out_of_range& e)
+    {
+        return false;
+    }
+
+    try
+    {
+        literalTable.at(symbolName);
+        return true;
+    }
+        //throws an undefined symbol exception, but might be better to include line/address symbol was found at 
+    catch(const std::out_of_range& e)
+    {
+       \return false;
+    }
+}
+
+//used to get the immediate value of a literal
 std::string SymbolTable::getLiteralValue(std::string literalName){
         try
     {
@@ -82,6 +98,9 @@ void SymbolTable::instantiateLiterals(LocationCounter& locctr, std::vector<sourc
     //regex is here to isolate the type and value of the literal
     std::regex literalRegex("=[C,X]'(.*)'");
     for(auto literal : literalTable) {
+
+        //only assign literals who have no assigned address
+        if(literal.second.address!=""){
         sourceLineStruct currentLiteral = sourceLineStruct();
         std::string literalDefinition = literal.second.value;
         std::smatch isolatedValue;
@@ -117,6 +136,13 @@ void SymbolTable::instantiateLiterals(LocationCounter& locctr, std::vector<sourc
             output.push_back(currentLiteral);
             //we'll assume that each literal is 1 word in length
             locctr.incrementLocationCounter(3);
+        }
     } 
+
+}
+
+//attempts to resolve all symbol values
+//at the end of pass1 if not all symbolvalues can be resolved throws an error
+void SymbolTable::resolveSymbols(bool endOfPass1){
 
 }

@@ -35,13 +35,23 @@ class SymbolTable{
     std::unordered_map<std::string, literal> literalTable{
     };
 public:
+  //used to add a new literal to the literal table
   void addLiteral(std::string literalName, std::string literalValue);
-  void addLiteralAddress(std::string literalName, std::string literalAddress);
+  //used to add a new symbol to the symtab
   void addSymbol(std::string symbolName, std::string symbolValue, bool isAbsolute);
+  //used to get the address of a symbol or literal
   std::string getSymbolValue(std::string symbolName);
+  //used to access the immediate value of a literal
   std::string getLiteralValue(std::string literalName);
+  //used to check if a symbol is absolute or not
   bool isAbsolute(std::string symbolName);
+  //used to assign locations to all the literals currently waiting for assignment in the literal table
   void instantiateLiterals(LocationCounter& locctr, std::vector<sourceLineStruct>& output);
+  //used to check if a string is a valid symbol or literal
+  bool isSymbol(std::string symbolName);
+  //attempts to resolve all symbol values
+  //if there are symbols that are unable to be resolved and this is the end of Pass 1 we throw an error
+  void resolveSymbols(bool endOfPass1);
 
 };
 
