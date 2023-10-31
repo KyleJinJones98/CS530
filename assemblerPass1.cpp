@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include "assemblerDirectivesPass1.h"
 
 //Implements the operations during the first pass of the assembler
 
@@ -28,10 +29,12 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines){
     output.push_back(firstLine);
     symtab.addSymbol(firstLine.label, firstLine.lineAddress, true);
 
-    for(int i = 1; i<(sourceLines.size()-1); i++){
+    for(unsigned int i = 1; i<(sourceLines.size()-1); i++){
         sourceLineStruct currentLine = sourceLineStruct();
         currentLine.getLineComponents(sourceLines[i]); //extract the line components from the current source line
         currentLine.lineAddress = locctr.getLocationCounter();//assign address to current line of source
+        //append the proccessed line struct
+        output.push_back(currentLine);
 
         if(currentLine.label != "" && currentLine.targetAddress.find("=")== std::string::npos){ //check if label is defined and is not a literal
             symtab.addSymbol(currentLine.label,currentLine.lineAddress, true);
@@ -46,10 +49,12 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines){
             locctr.incrementLocationCounter(bytes);
         }
         //check and handle directive here
-        else if(false){
+        else if(checkDirective(currentLine.operation)){
             //if true handleDirective(currentLine.operation, currentLine.targetAddress, locctr)
-
+            handleDirective(currentLine.operation, currentLine.targetAddress, locctr, symtab, output);
             //increment locctr if directive requires it
+            int bytes = getDirectiveSize(currentLine.operation, currentLine.targetAddress);
+            locctr.incrementLocationCounter(bytes);
         }
         else{
             std::cout<<"Unregocnized command: "+ currentLine.operation+ " at line: "+ std::to_string(i)+"\n";
@@ -57,25 +62,26 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines){
             exit(3);
         }
 
-        //append the proccessed line struct
-        output.push_back(currentLine);
+
     }
 
     //once all lines have been processed we may need to resolve symbol values
     //As well as assign any unassigned literals, we would do this by "adding" a line
+    symtab.instantiateLiterals(locctr,output);
     //e.g for the example we would add a sourcelinestruct with the values
-    //line address = 0FC6 label =*      targetaddress = =C'EOF'             
+    //line address = 0FC6 label =*      opcode  =C'EOF' and hexinstruction = 454F46           
 
     //process the last line which should have the value of end
+
     
     return output;
 }
 
 int main(){
-    std::vector<std::string> testLines = {"SUM      START   0","FIRST    LDX    #0","LDA    #0", "+LDB    #TABLE2  ", "END     FIRST"};
+    std::vector<std::string> testLines = {"SUM      START   0","FIRST    LDX    #0","LDA    #0", "+LDB    #TABLE2  ", "MYLIT    LDA    =C'E'", "LIT    LDA    =C'EOF'","END     FIRST"};
     std::vector<sourceLineStruct> testOutput = pass1(testLines);
     std::cout<<"TEST"<<std::endl;
-    for (int i=0; i<=testOutput.size(); i++){
+    for (unsigned int i=0; i<=testOutput.size(); i++){
         testOutput[i].printLine();
     }
 }
