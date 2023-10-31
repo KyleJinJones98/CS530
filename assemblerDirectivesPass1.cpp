@@ -15,7 +15,7 @@ std::unordered_map<std::string, Directive> directiveTable{
   };
 
 
-bool isDirective(std::string operation)
+bool checkDirective(std::string operation)
 {
     //if directive in directive table return true
     auto directiveEnum = directiveTable.find(operation);
@@ -26,16 +26,16 @@ bool isDirective(std::string operation)
     return false;
 }
 
-void handleDirective(std::string operation, std::string targetAddress, LocationCounter locctr, SymbolTable symtab, std::vector<sourceLineStruct> output){
+void handleDirective(std::string operation, std::string targetAddress, LocationCounter& locctr, SymbolTable& symtab, std::vector<sourceLineStruct>& output){
     Directive directiveEnum = directiveTable[operation];
     switch (directiveEnum)
     {
     //we tell the symbol table to instantiate literals with the given location counter
     case Directive::LTORG:
-        symtab.createLiterals(locctr,output);
+        symtab.instantiateLiterals(locctr,output);
     //we reset the location counter to the given address
     case Directive::ORG:
-        locctr.setLocationCounter(std::to_integer(targetAddress));
+        locctr.setLocationCounter(toDec(targetAddress));
     default:
         break;
     }
@@ -46,7 +46,7 @@ void handleDirective(std::string operation, std::string targetAddress, LocationC
 int getDirectiveSize(std::string operation, std::string targetAddress)
 {
     Directive directiveEnum = directiveTable[operation];
-    int size = std::to_integer(targetAddress);
+    int size = std::stoi(targetAddress);
     switch (directiveEnum)
     {
     case Directive::RESB:

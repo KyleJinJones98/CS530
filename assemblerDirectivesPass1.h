@@ -1,5 +1,5 @@
-#ifndef assemblerDirectivePass1_H
-#define assemblerDirectivePass1_H
+#ifndef assemblerDirectivesPass1_H
+#define assemblerDirectivesPass1_H
 
 #include <string>
 #include <vector>
@@ -7,6 +7,7 @@
 #include "locationCounter.h"
 #include "symbolTable.h"
 #include "sourceLineStruct.h"
+#include "hexConverter.h"
 
 //Directives to Handle:
 //ResB ResW Byte Word
@@ -16,8 +17,9 @@
 // We don't need to do anything for Base
 
 //Handles assembler directives during pass1 of the Assembler
-bool isDirective(std::string operation);
-int getDirectiveSize(std::string operation);
+int getDirectiveSize(std::string operation, std::string targetAddress);
+bool checkDirective(std::string operation);
+void handleDirective(std::string operation, std::string targetAddress, LocationCounter& locctr, SymbolTable& symtab, std::vector<sourceLineStruct>& output);
 
 
 #endif
