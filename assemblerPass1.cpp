@@ -65,23 +65,34 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
     }
 
     //once all lines have been processed we may need to resolve symbol values
-    //As well as assign any unassigned literals, we would do this by "adding" a line
+
+    //As well as assign any unassigned literals, we would do this by "adding" a line for each one
     symtab.instantiateLiterals(locctr,output);
     //e.g for the example we would add a sourcelinestruct with the values
     //line address = 0FC6 label =*      opcode  =C'EOF' and hexinstruction = 454F46           
 
     //process the last line which should have the value of end
-
+    sourceLineStruct endLine;
+    endLine.getLineComponents(sourceLines[sourceLines.size()-1]);
+    //do error checking to ensure program is started correctly
+    if(endLine.operation!="END"){
+        std::cout<<"Program not started with correct opcode: END. \n Incorrect opcode: "+endLine.operation + "\n";
+       //throw "Program not started with correct opcode: Start. \n Incorrect opcode: "+firstLine.operation + "\n";
+       exit(3);
+    }
+    endLine.lineAddress=locctr.getLocationCounter();
+    output.push_back(endLine);
     
     return output;
 }
 
 int main(){
     SymbolTable symtab;
-    std::vector<std::string> testLines = {"SUM      START   0","FIRST    LDX    #0","LDA    #0", "+LDB    #TABLE2  ", "MYLIT    LDA    =C'E'", "LIT    LDA    =C'EOF'","END     FIRST"};
+    std::vector<std::string> testLines = {"SUM      START   0","FIRST    LDX    #0","LDA    #0", "+LDB    #TABLE2  ", "MYLIT    LDA    =C'E'", "LIT    LDA    =C'EOF'",
+    "COUNT    RESW    5", "    ORG    10","END     FIRST"};
     std::vector<sourceLineStruct> testOutput = pass1(testLines,symtab);
     std::cout<<"TEST"<<std::endl;
-    for (unsigned int i=0; i<=testOutput.size(); i++){
+    for (unsigned int i=0; i<testOutput.size(); i++){
         testOutput[i].printLine();
     }
 }
