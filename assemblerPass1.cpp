@@ -9,9 +9,8 @@
 
 //Implements the operations during the first pass of the assembler
 
-std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines){
+std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, SymbolTable& symtab){
     std::vector<sourceLineStruct> output;
-    SymbolTable symtab;
     
     //Process first Line here! 
     sourceLineStruct firstLine;
@@ -78,8 +77,9 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines){
 }
 
 int main(){
+    SymbolTable symtab;
     std::vector<std::string> testLines = {"SUM      START   0","FIRST    LDX    #0","LDA    #0", "+LDB    #TABLE2  ", "MYLIT    LDA    =C'E'", "LIT    LDA    =C'EOF'","END     FIRST"};
-    std::vector<sourceLineStruct> testOutput = pass1(testLines);
+    std::vector<sourceLineStruct> testOutput = pass1(testLines,symtab);
     std::cout<<"TEST"<<std::endl;
     for (unsigned int i=0; i<=testOutput.size(); i++){
         testOutput[i].printLine();
