@@ -26,12 +26,14 @@ int toDec(std::string hexnumber){
 //converts string to ascii and then to hex
 inline
 std::string toHex(std::string str, int width){
-  std::stringstream strstream;
+  std::stringstream hexstream;
 
   for (const auto &c : str) {
-    strstream<<std::setfill('0') << std::setw(width) <<std::hex <<std::uppercase<< int(c); 
+    hexstream<<std::hex <<std::uppercase<< int(c); 
   }
-  return (strstream.str());
+  std::stringstream formatstream;
+  formatstream<<std::setfill('0') << std::setw(width)<<hexstream.str();
+  return (formatstream.str());
 }
 
 #endif
