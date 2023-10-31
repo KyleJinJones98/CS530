@@ -77,7 +77,7 @@ bool SymbolTable::isAbsolute(std::string symbolName){
 }
 
 //instantiates literals starting at the given address
-void SymbolTable::instantiateLiterals(LocationCounter locctr, std::vector<sourceLineStruct> output)
+void SymbolTable::instantiateLiterals(LocationCounter& locctr, std::vector<sourceLineStruct>& output)
 {
     //regex is here to isolate the type and value of the literal
     std::regex literalRegex("=[C,X]'(.*)'");
@@ -85,13 +85,13 @@ void SymbolTable::instantiateLiterals(LocationCounter locctr, std::vector<source
         sourceLineStruct currentLiteral = sourceLineStruct();
         std::string literalDefinition = literal.second.value;
         std::smatch isolatedValue;
-        while(std::regex_search(literalDefinition,isolatedValue,literalRegex)){
-            if(isolatedValue.size()!=1){
+        std::regex_search(literalDefinition,isolatedValue,literalRegex);
+            if(isolatedValue.size()!=2){
                 std::cout<<"Error Parsing Literal: "+literalDefinition<<std::endl;
                 exit(3);
             }
 
-            std::string isolatedLiteral = isolatedValue.str(0);
+            std::string isolatedLiteral = isolatedValue.str(1);
             //if the literal is a charstring we need to convert to ascii and then to hex first
             if(literalDefinition[1]=='C'){
                 isolatedLiteral = toHex(isolatedLiteral,6);
@@ -112,12 +112,11 @@ void SymbolTable::instantiateLiterals(LocationCounter locctr, std::vector<source
             currentLiteral.lineAddress = locctr.getLocationCounter();
             currentLiteral.label = '*';
             currentLiteral.hexInstruction = isolatedLiteral;
+            currentLiteral.operation= literalDefinition;
             //add literal to sourcelines and increment locctr
             output.push_back(currentLiteral);
+            //we'll assume that each literal is 1 word in length
             locctr.incrementLocationCounter(3);
-
-        }
-
     } 
 
 }

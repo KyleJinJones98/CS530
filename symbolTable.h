@@ -41,7 +41,7 @@ public:
   std::string getSymbolValue(std::string symbolName);
   std::string getLiteralValue(std::string literalName);
   bool isAbsolute(std::string symbolName);
-  void instantiateLiterals(LocationCounter locctr, std::vector<sourceLineStruct> output);
+  void instantiateLiterals(LocationCounter& locctr, std::vector<sourceLineStruct>& output);
 
 };
 
