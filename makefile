@@ -7,8 +7,8 @@ CC = g++
 CFLAGS = -Wall -g -std=c++11
 
 #create executable
-assembler: assemblerPass1.cpp opcodeHandler.cpp symbolTable.cpp locationCounter.cpp sourceLineStruct.h
-	$(CC) $(CFLAGS) assemblerPass1.cpp locationCounter.cpp symbolTable.cpp opcodeHandler.cpp -o assembler
+assembler: assemblerPass1.cpp opcodeHandler.cpp symbolTable.cpp locationCounter.cpp sourceLineStruct.h assemblerDirectivesPass1.cpp
+	$(CC) $(CFLAGS) assemblerPass1.cpp locationCounter.cpp symbolTable.cpp opcodeHandler.cpp assemblerDirectivesPass1.cpp -o assembler
 
 #remove executable
 clean:
