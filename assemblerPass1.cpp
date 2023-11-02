@@ -31,9 +31,12 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
     for(unsigned int i = 1; i<(sourceLines.size()-1); i++){
         sourceLineStruct currentLine = sourceLineStruct();
         currentLine.getLineComponents(sourceLines[i]); //extract the line components from the current source line
+        if(currentLine.label!="."){
         currentLine.lineAddress = locctr.getLocationCounter();//assign address to current line of source
+        }
         //append the proccessed line struct
         output.push_back(currentLine);
+        if(currentLine.label!="."){
 
         if(currentLine.label != "" && currentLine.targetAddress.find("=")== std::string::npos){ //check if label is defined and is not a literal
             symtab.addSymbol(currentLine.label,currentLine.lineAddress, true);
@@ -59,6 +62,7 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
             std::cout<<"Unregocnized command: "+ currentLine.operation+ " at line: "+ std::to_string(i)+"\n";
             //throw "Unregocnized command: "+ currentLine.operation+ " at line: "+ std::to_string(i)+"\n";
             exit(3);
+        }
         }
 
 
@@ -88,7 +92,7 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
 
 int main(){
     SymbolTable symtab;
-    std::vector<std::string> testLines = {"SUM      START   0","FIRST    LDX    #0","LDA    #0", "+LDB    #TABLE2  ", "MYLIT    LDA    =C'E'", "LIT    LDA    =C'EOF'",
+    std::vector<std::string> testLines = {"SUM      START   0", ".Comment line here nothing here is code.","FIRST    LDX    #0","LDA    #0", "+LDB    #TABLE2  ", "MYLIT    LDA    =C'E'", "LIT    LDA    =C'EOF'",
     "COUNT    RESW    5", "    ORG    FIRST","END     FIRST"};
     std::vector<sourceLineStruct> testOutput = pass1(testLines,symtab);
     std::cout<<"TEST"<<std::endl;
