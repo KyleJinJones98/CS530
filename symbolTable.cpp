@@ -2,6 +2,8 @@
 //add a new literal to the literalTable
 //However, does not define its address, which is assumed to be defined later
 void SymbolTable::addLiteral(std::string literalName, std::string literalValue){
+    //need to add check literalvalue against already existing literals
+    //if already in table no need to readd it
     literal newLiteral =  {literalValue, ""};
     literalTable[literalName] = newLiteral;
 }
@@ -125,7 +127,6 @@ void SymbolTable::instantiateLiterals(LocationCounter& locctr, std::vector<sourc
                 exit(3);
             }
             //update the literaltable
-            literalTable[literal.first].value=isolatedLiteral;
             literalTable[literal.first].address = locctr.getLocationCounter();
             //finish literal initialization
             currentLiteral.lineAddress = locctr.getLocationCounter();
