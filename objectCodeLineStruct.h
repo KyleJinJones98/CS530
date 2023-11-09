@@ -64,17 +64,83 @@ struct formatThreeAndFourObjCode {
 };
 string assemble(sourceLineStruct instruction, SymbolTable pass1symTab) {
     //TODO: finish getopcodeformat in opcodeHandler.cpp
-//    int insFormat = getOpcodeFormat();
+    int insFormat = getOpcodeFormat();
     SymbolTable symTab = pass1symTab;
     int insFormat = 3;
 
     if (insFormat == 1) {
         //TODO: return type 1 ins form in hex representation
+        formatOneObjCode hexCode = formatOneObjCode();
+        string opcode = instruction.operation;
+        string operand = instruction.targetAddress;
+
+        if (operand[0] == '#') {
+            // Immediate addressing
+            operand.erase(0, 1);  // Remove the '#' symbol
+            // Validate and convert the immediate value to a suitable format.
+            if (symTab.isSymbol(targetAddress)) {
+                targetAddress = symTab.getSymbolValue(targetAddress);
+            }
+            hexCode.address = targetAddress;
+        
+            hexCode.byte = instruction.targetAddress;  // Immediate value as hex representation.
+        }
+        else if (operand[0] == '=') {
+            // Literal addressing
+            operand.erase(0, 1); // Remove the '=' symbol
+
+        }
+        else {
+            // Handle other cases, if needed, for the specific addressing modes of your assembly language.
+            hexCode.byte = "0";  // Use a default hex value.
+        }
+        return hexCode.getObjectCode();
     }
     else if (insFormat == 2) {
         //TODO: return type 2 ins form in hex representation
+        formatTwoObjCode hexCode = formatTwoObjCode(); 
+
+        string opcode = instruction.operation;
+        string operand = instruction.targetAddress;
+
+        if (operand[0] == '#') {
+            // Immediate addressing
+            operand.erase(0, 1);  // Remove the '#' symbol
+            // May want to validate and convert the immediate value to a suitable format.
+.
+            hexCode.opcode = opcode;
+            hexCode.reg1 = "01";  // Replace with the actual register value.
+            hexCode.reg2 = "00";  // You can set reg2 to a default value, e.g., "00".
+        }
+        else if (operand[0] == '@') {
+            // Indirect addressing
+            operand.erase(0, 1);  // Remove the '@' symbol
+            // May need to look up the value in the symbol table based on the operand.
+
+            hexCode.opcode = opcode;
+            hexCode.reg1 = "01";
+            hexCode.reg2 = "00";
+        }
+        else if (operand[0] == '=') {
+            // Literal addressing
+            operand.erase(0, 1);  // Remove the '=' symbol
+            // Handle literals here.
+
+            hexCode.opcode = opcode;
+            hexCode.reg1 = "R1";  // Replace with the actual register value.
+            hexCode.reg2 = "R2";  // Replace with the actual register value.
+        }
+        else {
+            // Handle other cases, if needed, for the specific addressing modes.
+
+            hexCode.opcode = opcode;
+            hexCode.reg1 = "00";
+            hexCode.reg2 = "00";
+        }
+
+        return hexCode.getObjectCode();
     }
-        //if format 3 or 4 instruction
+    //if format 3 or 4 instruction
     else {
         formatThreeAndFourObjCode hexCode = formatThreeAndFourObjCode();
         //assume simple addressing, will change if operand is imediate or indirect
@@ -97,8 +163,6 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab) {
             hexCode.address = targetAddress;
             hexCode.n = '0';
             hexCode.i = '1';
-
-
         }
         //if operand is using indirect addressing
         if (targetAddress[0] == '@') {
@@ -140,7 +204,6 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab) {
                 hexCode.p = "0";
                 hexCode.e = "1";
                 hexCode.n = "1";
-
             }
         }
 
@@ -156,12 +219,9 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab) {
         }
         //TODO: add base relative address calculation
         //get opcode + n + i (encodeOpcode adds these for us)
-        hexCode.opcode = encodeOpcode(opcode,hexCode.n=="1", hexCode.i=="1");
+        hexCode.opcode = encodeOpcode(opcode, hexCode.n=="1", hexCode.i=="1");
 
         return hexCode.getObjCode();
     };
 };
-
-
-
 #endif
