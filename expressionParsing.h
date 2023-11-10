@@ -3,7 +3,10 @@
 
 #include <string>
 #include "symbolTable.h"
-
+#include <iostream>
+#include <stack>
+#include <string>
+#include <queue>
 //used for resolving addition, subtraction, multiplication and division with symbols, and integers
 //Assumes all operands are either Symbols/Literals or integer strings
 

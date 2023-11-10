@@ -1,11 +1,5 @@
 #include "expressionParsing.h"
 
-
-#include <iostream>
-#include <stack>
-#include <string>
-#include <queue>
-
 //A Token can be either a value or a function(+-*/) in RPN
 struct Token {
     //stores the string representation of the token
@@ -208,15 +202,6 @@ Operand parseExpression(std::string expression, SymbolTable symtab)
     return parseExpressionRecursive(expression, symtab, 1);
 }
 
-int main() {
-    std::string testExpression = "35+100/5*8";
-    //int result = parseExpression(testExpression);
-
-    //std::cout << "Expression: " << testExpression << std::endl;
-    //std::cout << "Result: " << result << std::endl;
-
-    return 0;
-}
 
 
 
