@@ -1,10 +1,5 @@
 #include "expressionParsing.h"
 
-int parseExpression(std::string expression, SymbolTable symtab)
-{
-    return parseExpression(expression, symtab, 1);
-}
-
 
 #include <iostream>
 #include <stack>
@@ -20,14 +15,8 @@ struct Token {
     bool isOperand;
 };
 
-struct Operand{
-    int value;
-    //absolute is indicated by 0
-    //relative is indicated by 1
-    //expression is invalid if relatives do not cancel back to 0 or 1
-    int isAbsolute =0;
-}; 
 
+//performs relevant operation and checks for invalid state
 Operand performOperation(Operand op1, Operand op2, char function) {
     Operand result = Operand();
     switch (function) {
@@ -70,13 +59,8 @@ Operand performOperation(Operand op1, Operand op2, char function) {
     }
 }
 
-Operand getValue(std::string tokenString){
-    Operand operand = Operand();
-    operand.isAbsolute=0;
-    operand.value=std::stoi(tokenString);
-    return operand;
-}
 
+//used in shunting yard to determine order of operations
 int getPrecedence(char function){
     if(function == '+'||function =='-'){
         return 1;
@@ -90,7 +74,7 @@ int getPrecedence(char function){
     }
 }
 
-//create an rpn style queue of tokens
+//create an rpn style queue of tokens using shunting yard algorithm
 void createTokenQueue(std::string expression, std::queue<Token> &tokens){
     //operator stack
     std::stack<char> functions;
@@ -142,7 +126,7 @@ void createTokenQueue(std::string expression, std::queue<Token> &tokens){
     }
 }
 
-int parseExpression(std::string expression, SymbolTable symtab, int depth) {
+Operand parseExpressionRecursive(std::string expression, SymbolTable symtab, int depth) {
     std::queue<Token> tokens;
     createTokenQueue(expression,tokens);
     std::stack<Operand> operands;
@@ -156,9 +140,37 @@ int parseExpression(std::string expression, SymbolTable symtab, int depth) {
 
         //the next token is either an operand or function
         if(currentToken.isOperand){
+            Operand operand = Operand();
+            std::string tokenString = currentToken.tokenString;
+            if(symtab.isSymbol(tokenString)){
+                //get already defined symbol value or recurse to define it
+                if(symtab.isDefined(tokenString)){
+                    operand.value=symtab.getSymbolValueInt(tokenString);
+                    if(symtab.isAbsolute(tokenString)){
+                        operand.isAbsolute=0;
+                    }
+                    else{
+                        operand.isAbsolute=1;
+                    }
+                }
+                //otherwise we call parseExpression again on the expression defining the symbol
+                //and define its value
+                else{
+                    operand = parseExpressionRecursive(symtab.getSymbolValue(tokenString), symtab, depth+1);
+                    symtab.defineSymbol(tokenString, operand.value, operand.getAbsoluteFlag());
+                }
+            }
+            //if the operand is not a symbol it is an integer string we can convert
+            else{
+            operand.isAbsolute=0;
+            operand.value=std::stoi(tokenString);
+            }
 
-            operands.push(getValue(currentToken.tokenString));
+            //add operand to the operand stack
+            operands.push(operand);
         }
+
+        //if the token is a function then we need to perform an operation
         else{
             if(operands.size()<2){
                 std::cout<<"Insufficient operands for function: "<<currentToken.tokenString<< " in expression: "<<expression<<std::endl;
@@ -177,7 +189,23 @@ int parseExpression(std::string expression, SymbolTable symtab, int depth) {
         exit(1);
     }
 
-    return operands.top().value;
+    if (operands.top().isAbsolute!=0 || operands.top().isAbsolute!=1) {
+        std::cerr << "Invalid matching of relative and Absolute values in expression: " << expression<<std::endl;
+        exit(1);
+    }
+
+    return operands.top();
+}
+
+//used to get a value from a token either from symtab or converting to integer
+Operand getValue(std::string tokenString, SymbolTable symtab, int depth){
+
+}
+
+//Called to begin the parsing of an expression
+Operand parseExpression(std::string expression, SymbolTable symtab)
+{
+    return parseExpressionRecursive(expression, symtab, 1);
 }
 
 int main() {

@@ -14,7 +14,7 @@ void SymbolTable::addSymbol(std::string symbolName, std::string symbolValue, boo
     symbolTable[symbolName] = newSymbol;
 }
 
-//returns whether the given symbol is an absolute or relative value
+//returns the symbols definition, or the address of a literal
 std::string SymbolTable::getSymbolValue(std::string symbolName){
     try
     {
@@ -65,7 +65,7 @@ bool SymbolTable::isSymbol(std::string symbolName){
     }
 }
 
-//used to get the immediate value of a literal
+//used to get the definition of a literal
 std::string SymbolTable::getLiteralValue(std::string literalName){
         try
     {
@@ -85,13 +85,23 @@ bool SymbolTable::isAbsolute(std::string symbolName){
     {
         return symbolTable.at(symbolName).absoluteFlag;
     }
-    //throws an undefined symbol exception, but might be better to include line/address symbol was found at 
+    catch(const std::out_of_range& e)
+    {
+    }
+
+    //check if the name is a literal
+    //if so return true since all literals are absolute values
+    try
+    {
+        std::string addr=  literalTable.at(symbolName).address;
+        return true;
+    }
+    //if the name is neither symbol or literal print an error and exit
     catch(const std::out_of_range& e)
     {
         std::cerr << "Undefined Symbol: " <<symbolName<< std::endl;
         exit(3);
     }
-    
 }
 
 //instantiates literals starting at the given address
@@ -142,8 +152,72 @@ void SymbolTable::instantiateLiterals(LocationCounter& locctr, std::vector<sourc
 
 }
 
+//defines a symbol as being absolute or relative, and assigns the integer value that corresponds to its definition string
+void SymbolTable::defineSymbol(std::string symbolName, int value, bool isAbsolute){
+
+       int symbolValue= parseExpression(symbolTable.at(symbolName).value, *this, depth);
+       symbolTable.at(symbolName).intValue = symbolValue;
+       symbolTable.at(symbolName).absoluteFlag=isAbsolute;
+        symbolTable.at(symbolName).isDefined=true;
+
+}
+
 //attempts to resolve all symbol values
 //at the end of pass1 if not all symbolvalues can be resolved throws an error
 void SymbolTable::resolveSymbols(bool endOfPass1){
 
+}
+
+//returns the resolved integer value of a symbol's defining string 
+//or a literals address converted to an integer
+int SymbolTable::getIntegerSymbolValue(std::string symbolName)
+{
+    try
+    {
+        return symbolTable.at(symbolName).intValue;
+    }
+    catch(const std::out_of_range& e)
+    {
+    }
+
+    try
+    {
+        std::string addr=  literalTable.at(symbolName).address;
+        if(addr==""){
+            std::cerr << "Unassigned Literal: " <<symbolName<< std::endl;
+            exit(3);
+        }
+        return toDec(addr);
+    }
+        //throws an undefined symbol exception, but might be better to include line/address symbol was found at 
+    catch(const std::out_of_range& e)
+    {
+        std::cerr << "Undefined Symbol: " <<symbolName<< std::endl;
+        exit(3);
+    }
+}
+
+//returns true if the integer value of a symbol has been defined
+//always returns true for literals 
+bool SymbolTable::isDefined(std::string symbolName)
+{
+    try
+    {
+        return symbolTable.at(symbolName).isDefined;
+    }
+    catch(const std::out_of_range& e)
+    {
+    }
+
+    try
+    {
+        std::string addr=  literalTable.at(symbolName).address;
+        return true;
+    }
+        //throws an undefined symbol exception, but might be better to include line/address symbol was found at 
+    catch(const std::out_of_range& e)
+    {
+        std::cerr << "Undefined Symbol: " <<symbolName<< std::endl;
+        exit(3);
+    }
 }

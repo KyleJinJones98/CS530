@@ -17,6 +17,8 @@
 struct symbol{
     std::string value;
     bool absoluteFlag; // false = relative true = absolute
+    int intValue;
+    bool isDefined=false;
 };
 
 struct literal{
@@ -52,6 +54,14 @@ public:
   //attempts to resolve all symbol values
   //if there are symbols that are unable to be resolved and this is the end of Pass 1 we throw an error
   void resolveSymbols(bool endOfPass1);
+
+  //used to give a symbol its integer value
+  void defineSymbol(std::string symbolName, int value, bool isAbsolute); 
+
+  //returns the resolved integer value of a symbol, or the integer value of 
+  int getSymbolValueInt(std::string symbolName);
+
+  bool isDefined(std::string symbolName);
 
 };
 
