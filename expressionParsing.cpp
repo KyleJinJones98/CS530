@@ -9,7 +9,6 @@ struct Token {
     bool isOperand;
 };
 
-
 //performs relevant operation and checks for invalid state
 Operand performOperation(Operand op1, Operand op2, char function) {
     Operand result = Operand();
@@ -63,7 +62,7 @@ int getPrecedence(char function){
         return 2;
     }
     else{
-        std::cout<<"Unkown function detected "<<function<<" in expression"<<std::endl;
+        std::cout<<"Unkown function detected "<<function<<std::endl;
         exit(3);
     }
 }
@@ -156,8 +155,15 @@ Operand parseExpressionRecursive(std::string expression, SymbolTable symtab, int
             }
             //if the operand is not a symbol it is an integer string we can convert
             else{
-            operand.isAbsolute=0;
-            operand.value=std::stoi(tokenString);
+                try{
+                    operand.isAbsolute=0;
+                    operand.value=std::stoi(tokenString);
+                }
+                //if we are unable to convert to an integer we error out of the program
+                catch(std::invalid_argument e){
+                    std::cout<<"Unkown Operand Detected "<<currentToken.tokenString<<" in expression"<<expression<<std::endl;
+                    exit(3);
+                }
             }
 
             //add operand to the operand stack
@@ -183,7 +189,7 @@ Operand parseExpressionRecursive(std::string expression, SymbolTable symtab, int
         exit(1);
     }
 
-    if (operands.top().isAbsolute!=0 || operands.top().isAbsolute!=1) {
+    if (operands.top().isAbsolute!=0 && operands.top().isAbsolute!=1) {
         std::cerr << "Invalid matching of relative and Absolute values in expression: " << expression<<std::endl;
         exit(1);
     }
@@ -191,10 +197,6 @@ Operand parseExpressionRecursive(std::string expression, SymbolTable symtab, int
     return operands.top();
 }
 
-//used to get a value from a token either from symtab or converting to integer
-Operand getValue(std::string tokenString, SymbolTable symtab, int depth){
-
-}
 
 //Called to begin the parsing of an expression
 Operand parseExpression(std::string expression, SymbolTable symtab)
