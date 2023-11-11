@@ -8,7 +8,7 @@
 //used to store the contents of a line of source in assembler relevant variables
 struct sourceLineStruct
 {
-    std::string label; //stores the name of 
+    std::string label; //stores the name of a symbol for the line if it exists
     std::string operation; //stores the assembler directive or opcode
     std::string targetAddress; //stores the address the line of source targets
     std::string lineAddress; // the address of the line of source, to be assigned during pass 1
@@ -51,6 +51,12 @@ struct sourceLineStruct
         label = components[0]; 
         operation = components[1];
         targetAddress = components[2]; 
+        }
+    //if there is only one argument it may be a special directive like LITORG
+    else if(components.size()==1){
+        label = ""; 
+        operation = components[0];
+        targetAddress = ""; 
         }
     //if this wasn't a comment line and we have more than 3 arguments then there was some error in the line
     else{
