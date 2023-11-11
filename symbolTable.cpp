@@ -9,8 +9,9 @@ void SymbolTable::addLiteral(std::string literalName, std::string literalValue){
 }
 
 //adds a new symbol to the symboltable
-void SymbolTable::addSymbol(std::string symbolName, std::string symbolValue, bool isAbsolute){
-    symbol newSymbol = {symbolValue, isAbsolute};
+void SymbolTable::addSymbol(std::string symbolName, std::string symbolValue){
+    symbol newSymbol = symbol();
+    newSymbol.value=symbolValue;
     symbolTable[symbolName] = newSymbol;
 }
 
@@ -155,8 +156,7 @@ void SymbolTable::instantiateLiterals(LocationCounter& locctr, std::vector<sourc
 //defines a symbol as being absolute or relative, and assigns the integer value that corresponds to its definition string
 void SymbolTable::defineSymbol(std::string symbolName, int value, bool isAbsolute){
 
-       int symbolValue= parseExpression(symbolTable.at(symbolName).value, *this, depth);
-       symbolTable.at(symbolName).intValue = symbolValue;
+       symbolTable.at(symbolName).intValue = value;
        symbolTable.at(symbolName).absoluteFlag=isAbsolute;
         symbolTable.at(symbolName).isDefined=true;
 
@@ -170,7 +170,7 @@ void SymbolTable::resolveSymbols(bool endOfPass1){
 
 //returns the resolved integer value of a symbol's defining string 
 //or a literals address converted to an integer
-int SymbolTable::getIntegerSymbolValue(std::string symbolName)
+int SymbolTable::getSymbolValueInt(std::string symbolName)
 {
     try
     {

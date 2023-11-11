@@ -8,6 +8,7 @@
 #include "symbolTable.h"
 #include "sourceLineStruct.h"
 #include "hexConverter.h"
+#include "expressionParsing.h"
 
 //Directives to Handle:
 //ResB ResW Byte Word
@@ -19,7 +20,7 @@
 //Handles assembler directives during pass1 of the Assembler
 int getDirectiveSize(SymbolTable symtab, std::string operation, std::string targetAddress);
 bool checkDirective(std::string operation);
-void handleDirective(std::string operation, std::string targetAddress, LocationCounter& locctr, SymbolTable& symtab, std::vector<sourceLineStruct>& output);
+void handleDirective(std::string label, std::string operation, std::string targetAddress, LocationCounter& locctr, SymbolTable& symtab, std::vector<sourceLineStruct>& output);
 
 
 #endif

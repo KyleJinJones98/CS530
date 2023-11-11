@@ -40,7 +40,7 @@ public:
   //used to add a new literal to the literal table
   void addLiteral(std::string literalName, std::string literalValue);
   //used to add a new symbol to the symtab
-  void addSymbol(std::string symbolName, std::string symbolValue, bool isAbsolute);
+  void addSymbol(std::string symbolName, std::string symbolValue);
   //used to get the address of a symbol or literal
   std::string getSymbolValue(std::string symbolName);
   //used to access the immediate value of a literal

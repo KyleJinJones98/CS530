@@ -26,7 +26,7 @@ bool checkDirective(std::string operation)
     return false;
 }
 
-void handleDirective(std::string operation, std::string targetAddress, LocationCounter& locctr, SymbolTable& symtab, std::vector<sourceLineStruct>& output){
+void handleDirective(std::string label, std::string operation, std::string targetAddress, LocationCounter& locctr, SymbolTable& symtab, std::vector<sourceLineStruct>& output){
     Directive directiveEnum = directiveTable[operation];
     switch (directiveEnum)
     {
@@ -35,11 +35,16 @@ void handleDirective(std::string operation, std::string targetAddress, LocationC
         symtab.instantiateLiterals(locctr,output);
     //we reset the location counter to the given address
     case Directive::ORG:
-        if(symtab.isSymbol(targetAddress)){
-            locctr.setLocationCounter(toDec(symtab.getSymbolValue(targetAddress)));
+        locctr.setLocationCounter(parseExpression(targetAddress,symtab).value);
+    case Directive::EQU:
+        symtab.addSymbol(label, targetAddress);
+    case Directive::BYTE:
+        if(label!=""){
+            symtab.addSymbol(label, targetAddress);
         }
-        else{
-            locctr.setLocationCounter(std::stoi(targetAddress));
+    case Directive::WORD:
+        if(label!=""){
+            symtab.addSymbol(label, targetAddress);
         }
     default:
         break;
@@ -51,25 +56,12 @@ void handleDirective(std::string operation, std::string targetAddress, LocationC
 int getDirectiveSize(SymbolTable symtab, std::string operation, std::string targetAddress)
 {
     Directive directiveEnum = directiveTable[operation];
-    int size;
     switch (directiveEnum)
     {
     case Directive::RESB:
-        if(symtab.isSymbol(targetAddress)){
-            size = toDec(symtab.getSymbolValue(targetAddress));
-        }
-        else{
-            size = std::stoi(targetAddress);
-        }
-        return size;
+        return parseExpression(targetAddress,symtab).value;
     case Directive::RESW:
-        if(symtab.isSymbol(targetAddress)){
-            size = toDec(symtab.getSymbolValue(targetAddress));
-        }
-        else{
-            size = std::stoi(targetAddress);
-        }
-        return size*3;
+        return  parseExpression(targetAddress,symtab).value*3;
     case Directive::BYTE:
         return 1;
     case Directive::WORD:

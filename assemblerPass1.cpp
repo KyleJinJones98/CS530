@@ -21,12 +21,20 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
        //throw "Program not started with correct opcode: Start. \n Incorrect opcode: "+firstLine.operation + "\n";
        exit(3);
     }
-    
+
+    //if our starting address is 0, this is a relocatable program and symbol addresses are relative
+    //otherwise they are absolute
+    bool absoluteProgram = true;
+    if(toDec(firstLine.targetAddress)==0){
+        absoluteProgram =false;
+    }
+
     //set defaults based on first line contents
     LocationCounter locctr = LocationCounter(firstLine.targetAddress);
     firstLine.lineAddress = locctr.getLocationCounter();
     output.push_back(firstLine);
-    symtab.addSymbol(firstLine.label, firstLine.lineAddress, true);
+    symtab.addSymbol(firstLine.label, firstLine.lineAddress);
+    symtab.defineSymbol(firstLine.label, toDec(firstLine.lineAddress), absoluteProgram);
 
     for(unsigned int i = 1; i<(sourceLines.size()-1); i++){
         sourceLineStruct currentLine = sourceLineStruct();
@@ -37,11 +45,17 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
         //append the proccessed line struct
         output.push_back(currentLine);
         if(currentLine.label!="."){
-
-        if(currentLine.label != "" && currentLine.targetAddress.find("=")== std::string::npos){ //check if label is defined and is not a literal
-            symtab.addSymbol(currentLine.label,currentLine.lineAddress, true);
+        
+        bool isLiteral = currentLine.targetAddress.find("=")!= std::string::npos;
+        if(currentLine.label != "" && !isLiteral){ //check if label is defined and is not a literal
+            symtab.addSymbol(currentLine.label,currentLine.lineAddress);
+            symtab.defineSymbol(currentLine.label, toDec(currentLine.lineAddress), absoluteProgram);
         }
-        else if(currentLine.targetAddress.find("=")!= std::string::npos){//check if a literal was defined
+        //add literal with no label using definition string as default
+        else if(currentLine.label==""&& isLiteral){
+            symtab.addLiteral(currentLine.targetAddress, currentLine.targetAddress);
+        }
+        else if(isLiteral){//add a literl with a label
             symtab.addLiteral(currentLine.label, currentLine.targetAddress);
         } 
 
@@ -53,7 +67,7 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
         //check and handle directive here
         else if(checkDirective(currentLine.operation)){
             //if true handleDirective(currentLine.operation, currentLine.targetAddress, locctr)
-            handleDirective(currentLine.operation, currentLine.targetAddress, locctr, symtab, output);
+            handleDirective(currentLine.label, currentLine.operation, currentLine.targetAddress, locctr, symtab, output);
             //increment locctr if directive requires it
             int bytes = getDirectiveSize(symtab,currentLine.operation, currentLine.targetAddress);
             locctr.incrementLocationCounter(bytes);
@@ -69,7 +83,6 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
     }
 
     //once all lines have been processed we may need to resolve symbol values
-
     //As well as assign any unassigned literals, we would do this by "adding" a line for each one
     symtab.instantiateLiterals(locctr,output);
     //e.g for the example we would add a sourcelinestruct with the values
@@ -93,7 +106,7 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
 int main(){
     SymbolTable symtab;
     std::vector<std::string> testLines = {"SUM      START   0", ".Comment line here nothing here is code.","FIRST    LDX    #0","LDA    #0", "+LDB    #TABLE2  ", "MYLIT    LDA    =C'E'", "LIT    LDA    =C'EOF'",
-    "COUNT    RESW    5", "    ORG    FIRST","END     FIRST"};
+    "COUNT    RESW    5", "TWO    EQU    1+1","    ORG    FIRST+10/5*TWO","END     FIRST"};
     std::vector<sourceLineStruct> testOutput = pass1(testLines,symtab);
     std::cout<<"TEST"<<std::endl;
     for (unsigned int i=0; i<testOutput.size(); i++){
