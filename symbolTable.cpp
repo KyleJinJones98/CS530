@@ -105,6 +105,14 @@ bool SymbolTable::isAbsolute(std::string symbolName){
     }
 }
 
+std::vector<std::string> SymbolTable::getAllSymbols(){
+    std::vector<std::string> symbolNames;
+    for (auto symbol : symbolTable){
+        symbolNames.push_back(symbol.first);
+    }
+    return symbolNames;
+}
+
 //instantiates literals starting at the given address
 void SymbolTable::instantiateLiterals(LocationCounter& locctr, std::vector<sourceLineStruct>& output)
 {

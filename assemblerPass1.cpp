@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include "assemblerDirectivesPass1.h"
+#include "expressionParsing.h"
 
 //Implements the operations during the first pass of the assembler
 
@@ -86,7 +87,15 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
     //As well as assign any unassigned literals, we would do this by "adding" a line for each one
     symtab.instantiateLiterals(locctr,output);
     //e.g for the example we would add a sourcelinestruct with the values
-    //line address = 0FC6 label =*      opcode  =C'EOF' and hexinstruction = 454F46           
+    //line address = 0FC6 label =*      opcode  =C'EOF' and hexinstruction = 454F46  
+
+    std::vector<std::string> symbolNames = symtab.getAllSymbols();
+    for(unsigned int i = 0; i<symbolNames.size(); i++){
+        if(!symtab.isDefined(symbolNames[i])){
+            Operand result = parseExpression(symtab.getSymbolValue(symbolNames[i]), symtab);
+            symtab.defineSymbol(symbolNames[i], result.value, result.getAbsoluteFlag());
+        }
+    }         
 
     //process the last line which should have the value of end
     sourceLineStruct endLine;
