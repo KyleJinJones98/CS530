@@ -2,7 +2,9 @@
 #include "locationCounter.h"
 #include "opcodeHandler.h"
 #include "symbolTable.h"
+#include "assemblerPass2.cpp"
 #include <string>
+#include <fstream>
 #include <vector>
 #include <iostream>
 #include "assemblerDirectivesPass1.h"
@@ -114,12 +116,27 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
 
 int main(){
     SymbolTable symtab;
-    std::vector<std::string> testLines = {"SUM      START   0", ".Comment line here nothing here is code.","FIRST    LDX    #0","LDA    #0", "+LDB    #TABLE2  ", "MYLIT    LDA    =C'E'", "LIT    LDA    =C'EOF'",
-    "COUNT    RESW    5", "TWO    EQU    1+1","    ORG    FIRST+10/5*TWO","END     FIRST"};
+
+    //read file
+    std::vector<std::string> testLines;
+    std::ifstream file("testFile.sic");
+    std::string str;
+    while (std::getline(file, str))
+    {
+        testLines.push_back(str);
+    }
+
+    //do and print pass1
     std::vector<sourceLineStruct> testOutput = pass1(testLines,symtab);
     std::cout<<"TEST"<<std::endl;
     for (unsigned int i=0; i<testOutput.size(); i++){
         testOutput[i].printLine();
+    }
+
+    //do and print pass 2
+    std::vector<sourceLineStruct> testOutput2 = pass2(testOutput,symtab);
+    for (unsigned int i = 0; i < testOutput2.size(); i++) {
+        testOutput2[i].printLine();
     }
 }
 
