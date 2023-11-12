@@ -1,21 +1,21 @@
-#include "sourceLineStruct.h"
-#include "locationCounter.h"
-#include "opcodeHandler.h"
-#include "symbolTable.h"
-#include <string>
-#include <vector>
-#include <iostream>
-#include "assemblerDirectivesPass1.h"
-#include "expressionParsing.h"
+#include "assemblerPass1.h"
 
 //Implements the operations during the first pass of the assembler
 
 std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, SymbolTable& symtab){
     std::vector<sourceLineStruct> output;
     
-    //Process first Line here! 
     sourceLineStruct firstLine;
     firstLine.getLineComponents(sourceLines[0]);
+    unsigned int startingLine=0;
+
+    //process any number of commentlines until first line is reached
+    while(firstLine.label=="."){
+        output.push_back(firstLine);
+        firstLine =sourceLineStruct();
+        startingLine++;
+        firstLine.getLineComponents(sourceLines[startingLine]);
+    }
     //do error checking to ensure program is started correctly
     if(firstLine.operation!="START"){
         std::cout<<"Program not started with correct opcode: Start. \n Incorrect opcode: "+firstLine.operation + "\n";
@@ -37,7 +37,7 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
     symtab.addSymbol(firstLine.label, firstLine.lineAddress);
     symtab.defineSymbol(firstLine.label, toDec(firstLine.lineAddress), absoluteProgram);
 
-    for(unsigned int i = 1; i<(sourceLines.size()-1); i++){
+    for(unsigned int i = startingLine+1; i<(sourceLines.size()-1); i++){
         sourceLineStruct currentLine = sourceLineStruct();
         currentLine.getLineComponents(sourceLines[i]); //extract the line components from the current source line
         if(currentLine.label!="."){
@@ -112,6 +112,7 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
     return output;
 }
 
+/*
 int main(){
     SymbolTable symtab;
     std::vector<std::string> testLines = {"SUM      START   0", ".Comment line here nothing here is code.","FIRST    LDX    #0","LDA    #0", "+LDB    #TABLE2  ", "MYLIT    LDA    =C'E'", "LIT    LDA    =C'EOF'",
@@ -122,4 +123,4 @@ int main(){
         testOutput[i].printLine();
     }
 }
-
+*/
