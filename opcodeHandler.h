@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <iostream>
 #include "hexConverter.h"
+#include <tuple>
 
 //Handles operations relating to opcodes
 //Does not need to be a class since there is no data we need to store
