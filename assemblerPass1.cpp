@@ -1,20 +1,21 @@
+#include "assemblerPass2.cpp"
 #include "sourceLineStruct.h"
 #include "locationCounter.h"
 #include "opcodeHandler.h"
 #include "symbolTable.h"
-#include "assemblerPass2.cpp"
+#include "assemblerDirectivesPass1.h"
+#include "expressionParsing.h"
 #include <string>
 #include <fstream>
 #include <vector>
 #include <iostream>
-#include "assemblerDirectivesPass1.h"
-#include "expressionParsing.h"
+
 
 //Implements the operations during the first pass of the assembler
 
 std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, SymbolTable& symtab){
     std::vector<sourceLineStruct> output;
-    
+
     //Process first Line here! 
     sourceLineStruct firstLine;
     firstLine.getLineComponents(sourceLines[0]);
@@ -110,7 +111,7 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
     }
     endLine.lineAddress=locctr.getLocationCounter();
     output.push_back(endLine);
-    
+
     return output;
 }
 
@@ -125,18 +126,16 @@ int main(){
     {
         testLines.push_back(str);
     }
-
     //do and print pass1
     std::vector<sourceLineStruct> testOutput = pass1(testLines,symtab);
     std::cout<<"TEST"<<std::endl;
     for (unsigned int i=0; i<testOutput.size(); i++){
         testOutput[i].printLine();
     }
-
+    std::vector<sourceLineStruct> pass2Output = pass2(testOutput, symtab);
     //do and print pass 2
-    std::vector<sourceLineStruct> testOutput2 = pass2(testOutput,symtab);
-    for (unsigned int i = 0; i < testOutput2.size(); i++) {
-        testOutput2[i].printLine();
+    for (unsigned int i = 0; i < pass2Output.size(); i++) {
+        pass2Output[i].printLine();
     }
 }
 
