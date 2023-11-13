@@ -1,12 +1,15 @@
 #include "assemblerPass1.h"
 
-//Implements the operations during the first pass of the assembler
+//Implements the operations during the first pass of the assembler to assign addresses and create Symbols and Literals
 
 std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, SymbolTable& symtab){
+    //output is our list of processed source lines with assigned addresses
     std::vector<sourceLineStruct> output;
-    
+
+
     sourceLineStruct firstLine;
     firstLine.getLineComponents(sourceLines[0]);
+    //tracks the starting line of the program
     unsigned int startingLine=0;
 
     //process any number of commentlines until first line is reached
@@ -16,6 +19,7 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
         startingLine++;
         firstLine.getLineComponents(sourceLines[startingLine]);
     }
+
     //do error checking to ensure program is started correctly
     if(firstLine.operation!="START"){
         std::cout<<"Program not started with correct opcode: Start. \n Incorrect opcode: "+firstLine.operation + "\n";
@@ -34,17 +38,19 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
     LocationCounter locctr = LocationCounter(firstLine.targetAddress);
     firstLine.lineAddress = locctr.getLocationCounter();
     output.push_back(firstLine);
-    symtab.addSymbol(firstLine.label, firstLine.lineAddress);
-    symtab.defineSymbol(firstLine.label, toDec(firstLine.lineAddress), absoluteProgram);
 
+    //loop through the rest of the program lines from after the first line to just before the end line
     for(unsigned int i = startingLine+1; i<(sourceLines.size()-1); i++){
         sourceLineStruct currentLine = sourceLineStruct();
         currentLine.getLineComponents(sourceLines[i]); //extract the line components from the current source line
         if(currentLine.label!="."){
         currentLine.lineAddress = locctr.getLocationCounter();//assign address to current line of source
         }
+
         //append the proccessed line struct
         output.push_back(currentLine);
+
+        //if the line is not a comment line we process it further
         if(currentLine.label!="."){
         
         bool isLiteral = currentLine.targetAddress.find("=")!= std::string::npos;
@@ -56,7 +62,7 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
         else if(currentLine.label==""&& isLiteral){
             symtab.addLiteral(currentLine.targetAddress, currentLine.targetAddress);
         }
-        else if(isLiteral){//add a literl with a label
+        else if(isLiteral){//add a literal with a label
             symtab.addLiteral(currentLine.label, currentLine.targetAddress);
         } 
 
@@ -67,7 +73,7 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
         }
         //check and handle directive here
         else if(checkDirective(currentLine.operation)){
-            //if true handleDirective(currentLine.operation, currentLine.targetAddress, locctr)
+            //handles each assembly directive during Pass1
             handleDirective(currentLine.label, currentLine.operation, currentLine.targetAddress, locctr, symtab, output);
             //increment locctr if directive requires it
             int bytes = getDirectiveSize(symtab,currentLine.operation, currentLine.targetAddress);
@@ -75,20 +81,15 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
         }
         else{
             std::cout<<"Unregocnized command: "+ currentLine.operation+ " at line: "+ std::to_string(i)+"\n";
-            //throw "Unregocnized command: "+ currentLine.operation+ " at line: "+ std::to_string(i)+"\n";
             exit(3);
         }
         }
-
-
     }
 
-    //once all lines have been processed we may need to resolve symbol values
-    //As well as assign any unassigned literals, we would do this by "adding" a line for each one
+    //Assign any unassigned literals
     symtab.instantiateLiterals(locctr,output);
-    //e.g for the example we would add a sourcelinestruct with the values
-    //line address = 0FC6 label =*      opcode  =C'EOF' and hexinstruction = 454F46  
 
+    //define any undefined symbols
     std::vector<std::string> symbolNames = symtab.getAllSymbols();
     for(unsigned int i = 0; i<symbolNames.size(); i++){
         if(!symtab.isDefined(symbolNames[i])){
@@ -111,16 +112,3 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
     
     return output;
 }
-
-/*
-int main(){
-    SymbolTable symtab;
-    std::vector<std::string> testLines = {"SUM      START   0", ".Comment line here nothing here is code.","FIRST    LDX    #0","LDA    #0", "+LDB    #TABLE2  ", "MYLIT    LDA    =C'E'", "LIT    LDA    =C'EOF'",
-    "COUNT    RESW    5", "TWO    EQU    1+1","    ORG    FIRST+10/5*TWO","END     FIRST"};
-    std::vector<sourceLineStruct> testOutput = pass1(testLines,symtab);
-    std::cout<<"TEST"<<std::endl;
-    for (unsigned int i=0; i<testOutput.size(); i++){
-        testOutput[i].printLine();
-    }
-}
-*/

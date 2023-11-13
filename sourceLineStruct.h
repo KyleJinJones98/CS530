@@ -53,7 +53,7 @@ struct sourceLineStruct
         operation = components[1];
         targetAddress = components[2]; 
         }
-    //if there is only one argument it may be a special directive like LITORG
+    //if there is only one argument it may be a special directive like LITORG or RSUB
     else if(components.size()==1){
         label = ""; 
         operation = components[0];
@@ -68,6 +68,7 @@ struct sourceLineStruct
     }
 
 
+    //prints intermediate values of the sourcelines used for debugging
     void printLine(){
         if(label!="."){
             std::cout << std::setw(5) << std::left << lineAddress<< std::setw(8) << std::left << label<< std::setw(7) << std::left << operation<< std::setw(8) << std::left << targetAddress<< std::setw(8) << std::left << hexInstruction<<std::endl;
@@ -77,6 +78,7 @@ struct sourceLineStruct
         }
     }
 
+    //writes a source line to a given file
     void writeLine(std::ofstream &listingFile){
         if(label!="."){
             listingFile << std::setw(5) << std::left << lineAddress<< std::setw(8) << std::left << label<< std::setw(7) << std::left << operation<< std::setw(8) << std::left << targetAddress<< std::setw(8) << std::left << hexInstruction<<std::endl;

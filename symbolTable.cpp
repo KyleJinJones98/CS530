@@ -229,3 +229,19 @@ bool SymbolTable::isDefined(std::string symbolName)
         exit(3);
     }
 }
+
+void SymbolTable::writeTable(std::ofstream &symFile){
+    //symboltable header
+    symFile<< std::setw(SYM) << std::left << "Symbol"<< "  "<< std::setw(VAL) << std::left <<"Value"<< "  "<< std::setw(FLAG)<< std::left <<"Flags:"<<std::endl;
+    //spacing line
+    symFile<<std::left<<std::string(SYM+VAL+FLAG +6, '-')<<std::endl;
+
+    for (auto symbol : symbolTable){
+        //convert true fals absolute flag to A and R
+        std::string absFlag = "R";
+        if(symbol.second.absoluteFlag){
+            absFlag="A";
+        }
+        symFile<< std::setw(SYM) << std::left <<symbol.first<< "  "<< std::setw(VAL)<< std::left <<toHex(symbol.second.intValue, 6)<< "  "<< std::setw(FLAG)<< std::left<<absFlag<<std::endl;
+    }
+}

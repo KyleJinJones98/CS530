@@ -49,9 +49,19 @@ int main(int argc, char* argv[]){
             //pass2 sourceline struct to write to listing file
             int endOfName = fileName.find(".");
             std::string isolatedName= fileName.substr(0,endOfName);
-            std::cout<<"Pass1 Successful"<<std::endl;
-            writeListingFile(pass1Lines,isolatedName);
-            //symtab to symfile
+
+            //Write Listing File
+            std::ofstream listingFile(isolatedName+".lis");
+            for(sourceLineStruct line : pass1Lines){
+                line.writeLine(listingFile);
+            }
+            listingFile.close();
+
+            //write symtab to symfile 
+            std::ofstream symFile(isolatedName+".sym");
+            symtab.writeTable(symFile);
+            symFile.close();
+   
             //print file names
             std::cout<<"Successfully assembled source code to files: "<<isolatedName<<".lis and "<<isolatedName<<".sym"<<std::endl;
             //catch assemblyerror

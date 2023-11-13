@@ -11,9 +11,9 @@
 #include <iostream>
 #include "hexConverter.h"
 #include <vector>
+#include <fstream>
 
 //handles functionality related to the symbol table including updating symbol values, getting values, and writing the symbol table to a file
-
 
 struct symbol{
     std::string value;
@@ -27,7 +27,6 @@ struct literal{
     std:: string address;
 };
 
-
 class SymbolTable{
     //tracks symbols in the source code
 private:
@@ -37,6 +36,11 @@ private:
     //tracks literals in the source code
     std::unordered_map<std::string, literal> literalTable{
     };
+
+    //spacing constants for table writing to file
+    const int SYM = 6;
+    const int VAL = 6;
+    const int FLAG = 5;
 
 public:
   //used to add a new literal to the literal table
@@ -73,7 +77,10 @@ public:
   //returns whether the resolved integer value of a symbol has been defined
   bool isDefined(std::string symbolName);
 
+  //returns the full list of all symbolnames in the table
   std::vector<std::string> getAllSymbols();
+
+  void writeTable(std::ofstream &symFile);
 
 };
 
