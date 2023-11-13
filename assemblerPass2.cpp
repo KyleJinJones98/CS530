@@ -1,15 +1,7 @@
 //
 // Created by Jacob Opatz   on 10/31/23.
 //
-#include "sourceLineStruct.h"
-#include "locationCounter.h"
-#include "opcodeHandler.h"
-#include "symbolTable.h"
-#include "assemblerDirectivesPass1.h"
-#include "objectCodeLineStruct.h"
-#include <string>
-#include <vector>
-#include <iostream>
+#include "assemblerPass2.h"
 
 std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile, SymbolTable pass1SymTab) {
 
@@ -20,20 +12,15 @@ std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile,
     sourceLineStruct firstLine = listingFile[0];
     //first line of our object code
 
+    int startingLine = 0;
+    while(firstLine.label=="."){
+        startingLine++;
+        firstLine = listingFile[startingLine];
+    }
 
-    //check if first opcode == 'START'
-    if(firstLine.operation!="START"){
-        std::cout<<"Program not started with correct opcode: Start. \n Incorrect opcode: "+firstLine.operation + "\n";
-        //throw error, program not started correctly
-        exit(3);
-    };
-
-    //set defaults based on first line contents
-    LocationCounter locctr = LocationCounter(firstLine.targetAddress);
-    firstLine.lineAddress = locctr.getLocationCounter();
 
     //write first line
-    listingFile.push_back(firstLine);
+    //listingFile.push_back(firstLine);
 
     //initialize text record
 
@@ -45,7 +32,7 @@ std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile,
     bool hasX = false;
 
     //iterate through instructions
-    for (int i = 1; currentLine.operation != "END"; i++) {
+    for (int i = startingLine; currentLine.operation != "END"; i++) {
         //get next line
 
         currentLine = listingFile[i];
@@ -83,7 +70,7 @@ std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile,
                     //check if target address includes a comma
                     if(currentLine.targetAddress[currentLine.targetAddress.length() - 1] == 'X') {
 
-                        for(int i = 0; i < currentLine.targetAddress.length() ; i++) {
+                        for(unsigned int i = 0; i < currentLine.targetAddress.length() ; i++) {
                             if (currentLine.targetAddress[i] == ',') {
                                 hasX = true;
                                 currentLine.targetAddress.erase(i, currentLine.targetAddress.length());

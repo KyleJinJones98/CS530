@@ -63,6 +63,8 @@ struct formatThreeAndFourObjCode {
         return opcode + toHex(xbpeBit,1) + address;
     };
 };
+
+inline
 string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX) {
     //TODO: finish getopcodeformat in opcodeHandler.cpp
     int insFormat = getOpcodeFormat(instruction.operation);
@@ -81,10 +83,12 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX
             // Immediate addressing
             operand.erase(0, 1);  // Remove the '#' symbol
             // Validate and convert the immediate value to a suitable format.
-            if (symTab.isSymbol(targetAddress)) {
-                targetAddress = symTab.getSymbolValue(targetAddress);
+            if (symTab.isSymbol(instruction.targetAddress)) {
+                instruction.targetAddress = symTab.getSymbolValue(instruction.targetAddress);
             }
-            hexCode.address = targetAddress;
+
+            //unsure of which format 1 object code this is setting to
+            //hexCode.address = targetAddress;
 
             hexCode.byte = instruction.targetAddress;  // Immediate value as hex representation.
         }
@@ -189,7 +193,7 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX
             return hexCode.getObjCode();
         }
         //check for indexed addressing, get indexAmount
-        for( int i = 0; i < targetAddress.length(); i ++) {
+        for( unsigned int i = 0; i < targetAddress.length(); i ++) {
             if (targetAddress[i] == ',') {
                 hexCode.x = '1';
                 while (i < targetAddress.length()) {

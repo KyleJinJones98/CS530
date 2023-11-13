@@ -6,6 +6,7 @@
 #include <fstream>
 #include "sourceLineStruct.h"
 #include "assemblerPass1.h"
+#include "assemblerPass2.h"
 
 void writeListingFile(std::vector<sourceLineStruct> assembledLines, std::string fileName){
     std::ofstream listingFile(fileName+".lis");
@@ -46,8 +47,8 @@ int main(int argc, char* argv[]){
             }
             //symtab, and vector of strings to pass1
             SymbolTable symtab= SymbolTable();
-            std::vector<sourceLineStruct> pass1Lines =pass1(sourceLines, symtab);
-            std::vector<sourceLineStruct> pass2Lines = pass2(pass1Lines,symtab);
+            std::vector<sourceLineStruct> assembledLines =pass1(sourceLines, symtab);
+            //assembledLines = pass2(assembledLines,symtab);
             //pass1 sourceline struct to pass2
             //pass2 sourceline struct to write to listing file
             int endOfName = fileName.find(".");
@@ -55,7 +56,7 @@ int main(int argc, char* argv[]){
 
             //Write Listing File
             std::ofstream listingFile(isolatedName+".lis");
-            for(sourceLineStruct line : pass1Lines){
+            for(sourceLineStruct line : assembledLines){
                 line.writeLine(listingFile);
             }
             listingFile.close();
