@@ -79,6 +79,19 @@ std::string SymbolTable::getLiteralValue(std::string literalName){
         exit(3);
     }
 }
+std::string SymbolTable::getLiteralAddress(std::string literalName){
+    try
+    {
+        return literalTable.at(literalName).address;
+    }
+        //throws an undefined symbol exception, but might be better to include line/address symbol was found at
+    catch(const std::out_of_range& e)
+    {
+
+        std::cerr << "Undefined Literal: " <<literalName<< std::endl;
+        exit(3);
+    }
+}
 
 //returns whether the given symbol is an absolute or relative value
 bool SymbolTable::isAbsolute(std::string symbolName){

@@ -51,6 +51,9 @@ public:
   //used to access the immediate value of a literal
   std::string getLiteralValue(std::string literalName);
 
+    //used to access the address of a literal
+    std::string getLiteralAddress(std::string literalName);
+
   //used to check if a symbol is absolute or not
   bool isAbsolute(std::string symbolName);
 

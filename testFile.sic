@@ -1,0 +1,12 @@
+SUM      START   0
+.Comment line here nothing here is code.
+FIRST    LDX    #0
+LDA    #0
++LDB    #TABLE2
+MYLIT    LDA    =C'E'
+LIT    LDA    =C'EOF'
+COUNT    RESW    5
+TWO    EQU    1+1
+ORG    FIRST+10/5*TWO
+TABLE2 RESW 20
+END     FIRST

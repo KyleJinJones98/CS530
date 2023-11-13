@@ -1,10 +1,11 @@
+
 #include "assemblerPass1.h"
 
 //Implements the operations during the first pass of the assembler
 
 std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, SymbolTable& symtab){
     std::vector<sourceLineStruct> output;
-    
+
     sourceLineStruct firstLine;
     firstLine.getLineComponents(sourceLines[0]);
     unsigned int startingLine=0;
@@ -108,19 +109,32 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
     }
     endLine.lineAddress=locctr.getLocationCounter();
     output.push_back(endLine);
-    
+
     return output;
 }
 
 /*
 int main(){
     SymbolTable symtab;
-    std::vector<std::string> testLines = {"SUM      START   0", ".Comment line here nothing here is code.","FIRST    LDX    #0","LDA    #0", "+LDB    #TABLE2  ", "MYLIT    LDA    =C'E'", "LIT    LDA    =C'EOF'",
-    "COUNT    RESW    5", "TWO    EQU    1+1","    ORG    FIRST+10/5*TWO","END     FIRST"};
+
+    //read file
+    std::vector<std::string> testLines;
+    std::ifstream file("testFile.sic");
+    std::string str;
+    while (std::getline(file, str))
+    {
+        testLines.push_back(str);
+    }
+    //do and print pass1
     std::vector<sourceLineStruct> testOutput = pass1(testLines,symtab);
     std::cout<<"TEST"<<std::endl;
     for (unsigned int i=0; i<testOutput.size(); i++){
         testOutput[i].printLine();
+    }
+    std::vector<sourceLineStruct> pass2Output = pass2(testOutput, symtab);
+    //do and print pass 2
+    for (unsigned int i = 0; i < pass2Output.size(); i++) {
+        pass2Output[i].printLine();
     }
 }
 */
