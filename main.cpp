@@ -29,6 +29,8 @@ int main(int argc, char* argv[]){
     }
 
     for(std::string fileName : fileNames){
+
+        //could do some error checking here to ensure the fileName is a proper .sic file
         std::ifstream sourceFile(fileName);
 
         //if we fail to open the file, we cannot begin assembly of that file
@@ -45,6 +47,7 @@ int main(int argc, char* argv[]){
             //symtab, and vector of strings to pass1
             SymbolTable symtab= SymbolTable();
             std::vector<sourceLineStruct> pass1Lines =pass1(sourceLines, symtab);
+            std::vector<sourceLineStruct> pass2Lines = pass2(pass1Lines,symtab);
             //pass1 sourceline struct to pass2
             //pass2 sourceline struct to write to listing file
             int endOfName = fileName.find(".");
