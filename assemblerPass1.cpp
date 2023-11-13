@@ -1,3 +1,4 @@
+
 #include "assemblerPass1.h"
 
 //Implements the operations during the first pass of the assembler to assign addresses and create Symbols and Literals
@@ -5,7 +6,6 @@
 std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, SymbolTable& symtab){
     //output is our list of processed source lines with assigned addresses
     std::vector<sourceLineStruct> output;
-
 
     sourceLineStruct firstLine;
     firstLine.getLineComponents(sourceLines[0]);
@@ -109,6 +109,6 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
     }
     endLine.lineAddress=locctr.getLocationCounter();
     output.push_back(endLine);
-    
+
     return output;
 }
