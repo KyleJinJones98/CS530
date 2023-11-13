@@ -9,14 +9,13 @@ using namespace std;
 #include "locationCounter.h"
 #include "opcodeHandler.h"
 #include "symbolTable.h"
-
 #include <string>
 #include <vector>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
-#include<iostream>
+#include <iostream>
 #include <iomanip>
 //TODO: make actual assemble function
 
@@ -63,87 +62,40 @@ struct formatThreeAndFourObjCode {
         return opcode + toHex(xbpeBit,1) + address;
     };
 };
-
-inline
-string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX) {
+string assemble(sourceLineStruct instruction, SymbolTable pass1symTab) {
     //TODO: finish getopcodeformat in opcodeHandler.cpp
-    int insFormat = getOpcodeFormat(instruction.operation);
-    //TODO: delete this before push
-    insFormat = 3;
+    string opcode = instruction.operation;
+    int insFormat = getOpcodeFormat(opcode);
     SymbolTable symTab = pass1symTab;
-
-
+    //int insFormat = 3;
+    
     if (insFormat == 1) {
         //TODO: return type 1 ins form in hex representation
         formatOneObjCode hexCode = formatOneObjCode();
-        string opcode = instruction.operation;
-        string operand = instruction.targetAddress;
-
-        if (operand[0] == '#') {
-            // Immediate addressing
-            operand.erase(0, 1);  // Remove the '#' symbol
-            // Validate and convert the immediate value to a suitable format.
-            if (symTab.isSymbol(instruction.targetAddress)) {
-                instruction.targetAddress = symTab.getSymbolValue(instruction.targetAddress);
-            }
-
-            //unsure of which format 1 object code this is setting to
-            //hexCode.address = targetAddress;
-
-            hexCode.byte = instruction.targetAddress;  // Immediate value as hex representation.
-        }
-        else if (operand[0] == '=') {
-            // Literal addressing
-            operand.erase(0, 1); // Remove the '=' symbol
-
-        }
-        else {
-            // Handle other cases, if needed, for the specific addressing modes of your assembly language.
-            hexCode.byte = "0";  // Use a default hex value.
-        }
+        
+        checkOpcode(opcode);
         return hexCode.getObjCode();
     }
     else if (insFormat == 2) {
         //TODO: return type 2 ins form in hex representation
-        formatTwoObjCode hexCode = formatTwoObjCode();
-
-        string opcode = instruction.operation;
-        string operand = instruction.targetAddress;
-
-        if (operand[0] == '#') {
-            // Immediate addressing
-            operand.erase(0, 1);  // Remove the '#' symbol
-            // May want to validate and convert the immediate value to a suitable format.
-
-            hexCode.opcode = opcode;
-            hexCode.reg1 = "01";  // Replace with the actual register value.
-            hexCode.reg2 = "00";  // You can set reg2 to a default value, e.g., "00".
+        formatTwoObjCode hexCode = formatTwoObjCode(); 
+        string reg1, reg2, comma, reg1Temp, reg2Temp;
+        
+        //to extract register information from the read instruction
+        std::istringstream iss(opcode);
+        if (iss >> opcode >> reg1Temp >> comma >> reg2Temp)
+        {
+            //remove commas from register strings
+            reg1 = reg1Temp;
+            reg2 = reg2Temp;
+            reg1.erase(std::remove(reg1.begin(), reg1.end(), ','), reg1.end());
+            reg2.erase(std::remove(reg2.begin(), reg2.end(), ','), reg2.end());
         }
-        else if (operand[0] == '@') {
-            // Indirect addressing
-            operand.erase(0, 1);  // Remove the '@' symbol
-            // May need to look up the value in the symbol table based on the operand.
 
-            hexCode.opcode = opcode;
-            hexCode.reg1 = "01";
-            hexCode.reg2 = "00";
-        }
-        else if (operand[0] == '=') {
-            // Literal addressing
-            operand.erase(0, 1);  // Remove the '=' symbol
-            // Handle literals here.
-
-            hexCode.opcode = opcode;
-            hexCode.reg1 = "R1";  // Replace with the actual register value.
-            hexCode.reg2 = "R2";  // Replace with the actual register value.
-        }
-        else {
-            // Handle other cases, if needed, for the specific addressing modes.
-
-            hexCode.opcode = opcode;
-            hexCode.reg1 = "00";
-            hexCode.reg2 = "00";
-        }
+        //create the format 2 object code
+        hexCode.opcode = opcode;
+        hexCode.reg1 = reg1;
+        hexCode.reg2 = reg2;
 
         return hexCode.getObjCode();
     }
@@ -152,9 +104,7 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX
         formatThreeAndFourObjCode hexCode = formatThreeAndFourObjCode();
         //assume simple addressing, will change if operand is imediate or indirect
         hexCode.n = "1";
-
         hexCode.i = "1";
-        hexCode.p = "1";
         string opcode = instruction.operation;
         string currentProgLoc = instruction.lineAddress;
         string targetAddress = instruction.targetAddress;
@@ -168,15 +118,10 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX
 
             if (symTab.isSymbol(targetAddress)) {
                 targetAddress = symTab.getSymbolValue(targetAddress);
-                hexCode.p = "1";
             }
-            std::stringstream stream;
-            stream <<std::setfill('0') << std::setw(3) << hexCode.address;
-            hexCode.address = stream.str();
+            hexCode.address = targetAddress;
             hexCode.n = '0';
             hexCode.i = '1';
-            hexCode.p = '0';
-
         }
         //if operand is using indirect addressing
         if (targetAddress[0] == '@') {
@@ -184,7 +129,6 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX
 
             if (symTab.isSymbol(targetAddress)) {
                 targetAddress = symTab.getSymbolValue(targetAddress);
-                hexCode.p = '1';
             }
             hexCode.address = targetAddress;
             hexCode.n = '1';
@@ -193,7 +137,7 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX
             return hexCode.getObjCode();
         }
         //check for indexed addressing, get indexAmount
-        for( unsigned int i = 0; i < targetAddress.length(); i ++) {
+        for( int i = 0; i < targetAddress.length(); i ++) {
             if (targetAddress[i] == ',') {
                 hexCode.x = '1';
                 while (i < targetAddress.length()) {
@@ -206,43 +150,35 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX
         if (instruction.operation[0] == '+') {
             hexCode.e = "1";
         }
-        //if not using extended format, check if displacement will fit in format 4
+        //if not using extended format
         if (hexCode.e != "1") {
-            if (hexCode.p == "1") {
-                displacement = toDec(targetAddress) - (toDec(currentProgLoc) + 3);
-                //TODO: check if I should use base, if base is in symtab
-                if ((-2048 <= displacement) && (2047 >= displacement)) {
-                    hexCode.p = "1";
+            displacement = toDec(currentProgLoc) - toDec(targetAddress);
+            //TODO: check if I should use base, if base is in symtab
+            if ((-2048 <= displacement) && (2047 >= displacement)) {
+                hexCode.p = "1";
 
-                } else {
-                    hexCode.e = "1";
-
-
-                }
+            } else {
+                hexCode.b = "0";
+                hexCode.i = "1";
+                hexCode.p = "0";
+                hexCode.e = "1";
+                hexCode.n = "1";
             }
         }
 
         //bits are set, now calculate address field from target address
         if (hexCode.p == "1") {
 
-
             hexCode.address = toHex(displacement,3);
-            if (displacement < 0) {
-                hexCode.address = hexCode.address.erase(0, hexCode.address.length() - 3);
-            }
         }
-            //else, if using imediate addressing
+        //else, if using imediate addressing
         else if (hexCode.e == "1") {
             hexCode.address = toHex(toDec(targetAddress), 5);
 
         }
-        if (hasX) {
-
-            hexCode.x = "1";
-        };
         //TODO: add base relative address calculation
         //get opcode + n + i (encodeOpcode adds these for us)
-        hexCode.opcode = encodeOpcode(opcode,hexCode.n=="1", hexCode.i=="1");
+        hexCode.opcode = encodeOpcode(opcode, hexCode.n=="1", hexCode.i=="1");
 
         return hexCode.getObjCode();
     };
