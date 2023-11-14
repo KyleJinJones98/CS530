@@ -15,4 +15,4 @@
 1790 TABLE2  RESW   2000            
 2F00 TOTAL   RESW   1               
 2F03 *       =C'EOF'        454F46  
-2F06         END    FIRST           
+2F06         END    FIRST   454F46  
