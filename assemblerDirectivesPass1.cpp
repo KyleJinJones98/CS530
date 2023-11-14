@@ -1,6 +1,8 @@
+/**
+ * Joseph Vue, RED ID: 820231744
+ */
+
 #include "assemblerDirectivesPass1.h"
-
-
 
 enum Directive{RESB, RESW, BYTE, WORD, BASE, LTORG, ORG, EQU};
 std::unordered_map<std::string, Directive> directiveTable{
