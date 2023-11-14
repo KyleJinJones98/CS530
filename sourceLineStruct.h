@@ -82,10 +82,10 @@ struct sourceLineStruct
     //writes a source line to a given file
     void writeLine(std::ofstream &listingFile){
         if(label!="."){
-            listingFile << std::setw(5) << std::left << lineAddress<< std::setw(8) << std::left << label<< std::setw(7) << std::left << operation<< std::setw(8) << std::left << targetAddress<< std::setw(8) << std::left << hexInstruction<<std::endl;
+            listingFile << std::setw(4) << std::left << lineAddress<<" "<< std::setw(6) << std::left << label<<"  "<< std::setw(8) << std::left << operation<<"  "<< std::setw(10) << std::left << targetAddress<<" "<< std::setw(8) << std::left << hexInstruction<<std::endl;
         }
         else{
-            listingFile << std::setw(5) << std::left << label<< std::left <<operation<<std::endl;
+            listingFile << std::setw(4) << std::left << label <<" "<< std::left <<operation<<std::endl;
         }
     }
 
