@@ -257,4 +257,16 @@ void SymbolTable::writeTable(std::ofstream &symFile){
         }
         symFile<< std::setw(SYM) << std::left <<symbol.first<< "  "<< std::setw(VAL)<< std::left <<toHex(symbol.second.intValue, 6)<< "  "<< std::setw(FLAG)<< std::left<<absFlag<<std::endl;
     }
+
+    //spacing line between tables
+    symFile<<std::endl;
+
+    //Literal Table Head
+    symFile<< std::setw(NAM) << std::left << "Name"<< "  "<< std::setw(LIT) << std::left <<"Literal"<< "  "<< std::setw(ADDR)<< std::left <<"Address:"<<std::endl;
+    //spacing line
+    symFile<<std::left<<std::string(NAM+LIT+ADDR +6, '-')<<std::endl;
+
+    for (auto literal : literalTable){
+        symFile<< std::setw(NAM) << std::left << literal.first<< "  "<< std::setw(LIT) << std::left <<literal.second.value<< "  "<< std::setw(ADDR)<< std::left <<literal.second.address<<std::endl;
+    }
 }

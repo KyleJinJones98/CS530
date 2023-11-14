@@ -42,6 +42,9 @@ private:
     const int SYM = 6;
     const int VAL = 6;
     const int FLAG = 5;
+    const int NAM = 6;
+    const int LIT = 8;
+    const int ADDR = 10;
 
 public:
   //used to add a new literal to the literal table
