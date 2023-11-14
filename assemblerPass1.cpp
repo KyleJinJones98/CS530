@@ -50,6 +50,7 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
 
         //append the proccessed line struct
         output.push_back(currentLine);
+        int currentLineIndex = output.size()-1;
 
         //if the line is not a comment line we process it further
         if(currentLine.label!="."){
@@ -79,17 +80,23 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
             //increment locctr if directive requires it
             int bytes = getDirectiveSize(symtab,currentLine.operation, currentLine.targetAddress);
             locctr.incrementLocationCounter(bytes);
+            
         }
         else{
             std::cout<<"Unregocnized command: "+ currentLine.operation+ " at line: "+ std::to_string(i)+"\n";
             throw AssemblyException();
         }
         }
+        //replace * with location counter
+        if (output[currentLineIndex].targetAddress=="*"){
+            output[currentLineIndex].targetAddress = std::to_string(toDec(locctr.getLocationCounter()));
+        }
         }
         catch(AssemblyException e){
             std::cout<<"Assembly Pass 1 Error on Line "<<i<<" : "<<sourceLines[i]<<std::endl;
             throw AssemblyException();
         }
+
     }
 
     //Assign any unassigned literals
