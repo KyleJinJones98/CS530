@@ -48,7 +48,7 @@ int main(int argc, char* argv[]){
             //symtab, and vector of strings to pass1
             SymbolTable symtab= SymbolTable();
             std::vector<sourceLineStruct> assembledLines =pass1(sourceLines, symtab);
-            //assembledLines = pass2(assembledLines,symtab);
+            assembledLines = pass2(assembledLines,symtab);
             //pass1 sourceline struct to pass2
             //pass2 sourceline struct to write to listing file
             int endOfName = fileName.find(".");

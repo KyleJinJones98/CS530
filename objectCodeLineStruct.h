@@ -62,6 +62,8 @@ struct formatThreeAndFourObjCode {
         return opcode + toHex(xbpeBit,1) + address;
     };
 };
+
+inline
 string assemble(sourceLineStruct instruction, SymbolTable pass1symTab) {
     //TODO: finish getopcodeformat in opcodeHandler.cpp
     string opcode = instruction.operation;
@@ -137,7 +139,7 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab) {
             return hexCode.getObjCode();
         }
         //check for indexed addressing, get indexAmount
-        for( int i = 0; i < targetAddress.length(); i ++) {
+        for(unsigned int i = 0; i < targetAddress.length(); i ++) {
             if (targetAddress[i] == ',') {
                 hexCode.x = '1';
                 while (i < targetAddress.length()) {
