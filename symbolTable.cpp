@@ -1,3 +1,9 @@
+/**
+ * CS 530, Fall 2023
+ * 11/14/2023
+ * Joseph Vue, RED ID: 820231744
+ */
+
 #include "symbolTable.h"
 //add a new literal to the literalTable
 //However, does not define its address, which is assumed to be defined later
