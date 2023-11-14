@@ -1,3 +1,8 @@
+/**
+ * CS 530, Fall 2023
+ * Joseph Vue, RED ID: 820231744
+ */
+
 #ifndef assemblerDirectivesPass1_H
 #define assemblerDirectivesPass1_H
 
