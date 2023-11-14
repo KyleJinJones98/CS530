@@ -2,17 +2,18 @@
 0000 SUM     START  0               
 0000 FIRST   LDX    #0      052000  
 0003         LDA    #0      012003  
-0006         +LDB   #TABLE2 69101790
+0006         +LDB   #TABLE2 69101793
 000A         BASE   TABLE2          
-000A LOOP    ADD    TABLE,X 1B2FFFFFFEA
-000D         ADD    TABLE2,X1B101790
-0010         TIX    COUNT   2F2FFFFFFF3
+000A LOOP    ADD    TABLE,X 1B2FFFFFFE7
+000D         ADD    TABLE2,X1B101793
+0010         TIX    COUNT   2F2FFFFFFF0
 0013         JLT    LOOP    3B2009  
-0016         +STA   TOTAL   0F102F00
-001A MYLIT   LDA    =C'EOF' 03102F03
-001D COUNT   RESW   1               
-0020 TABLE   RESW   2000            
-1790 TABLE2  RESW   2000            
-2F00 TOTAL   RESW   1               
-2F03 *       =C'EOF'        454F46  
-2F06         END    FIRST           
+0016         +STA   TOTAL   0F102F03
+001A         RSUB           4C0000  
+001D MYLIT   LDA    =C'EOF' 03102F06
+0020 COUNT   RESW   1               
+0023 TABLE   RESW   2000            
+1793 TABLE2  RESW   2000            
+2F03 TOTAL   RESW   1               
+2F06 *       =C'EOF'        454F46  
+2F09         END    FIRST   454F46  
