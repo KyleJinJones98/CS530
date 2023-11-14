@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <iomanip>
+#include <iostream>
 
 /*
 hex Converter is a Utility class used for converting values to and from hex
@@ -20,7 +21,13 @@ std::string toHex(int decnumber, int width){
 //converts hex string to decimal
 inline
 int toDec(std::string hexnumber){
+  try{
     return stoi(hexnumber, 0, 16);
+  }
+  catch(std::invalid_argument e){
+    std::cout<<"Problem converting String: "<<hexnumber<<" To Decimal"<<std::endl;
+    exit(3);
+  }
 }
 
 //converts string to ascii and then to hex
