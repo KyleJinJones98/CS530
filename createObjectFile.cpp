@@ -1,5 +1,8 @@
 #include "createObjectFile.h"
 
+
+//should likely be stored in a shared header file, but time was running low and the overhead of including this here
+//and in assembler Directives is relatively low
 enum Directive{RESB, RESW, BYTE, WORD, BASE, LTORG, ORG, EQU};
 std::unordered_map<std::string, Directive> directivetable{
     {"RESB", Directive::RESB},
@@ -12,7 +15,9 @@ std::unordered_map<std::string, Directive> directivetable{
     {"EQU", Directive::EQU}
   };
 
+//the max length of a text record
 const int MAXTEXTLENGTH = 30;
+
 void generateObjectFile(std::vector<sourceLineStruct> assembledLines, std::string fileName){
     sourceLineStruct firstLine = assembledLines[0];
     int startingLine = 0;
@@ -21,10 +26,13 @@ void generateObjectFile(std::vector<sourceLineStruct> assembledLines, std::strin
         startingLine++;
         firstLine = assembledLines[startingLine];
     }
+
+    //generate header record
     HeaderLine hl = HeaderLine();
     hl.programName= firstLine.label;
     hl.startingAddress= toDec(firstLine.targetAddress);
 
+    //store our generated text records and modification records
     std::vector<TextLine> textLines;
     std::vector<ModificationLine> modLines;
     TextLine currentLine = TextLine();
@@ -41,7 +49,7 @@ void generateObjectFile(std::vector<sourceLineStruct> assembledLines, std::strin
                     currentLine.lineAddress=toDec(assembledLines[i].lineAddress);
                 }
                 //otherwise we have to check if the line fits
-                else if(toDec(assembledLines[i+1].lineAddress)-currentLine.lineAddress<=30){
+                else if(toDec(assembledLines[i+1].lineAddress)-currentLine.lineAddress<=MAXTEXTLENGTH){
                     currentLine.textLines.push_back(assembledLines[i].hexInstruction);
                     currentLine.lineLength =toDec(assembledLines[i+1].lineAddress)-currentLine.lineAddress;
                 }
@@ -153,16 +161,19 @@ void generateObjectFile(std::vector<sourceLineStruct> assembledLines, std::strin
         }
         }
         catch(AssemblyException e){
+            //print out error and rethrow exception to generate stack trace
             std::cout<<"Failed to Convert Line "<<i<<"To Object Code: ";
             assembledLines[i].printLine();
             throw AssemblyException();
         }
     }
 
+    //if the textline we were generating was not empty we need to append it
     if(currentLine.lineAddress!=-1){
         textLines.push_back(currentLine);
     }
 
+    //generate endline and calculate program size
     EndLine el = EndLine();
     el.endingAddress= toDec(assembledLines[assembledLines.size()-1].lineAddress);
     el.startingAddress = hl.startingAddress;
