@@ -45,6 +45,7 @@ int main(int argc, char* argv[]){
             while(std::getline(sourceFile,currentLine)){
                 sourceLines.push_back(currentLine);
             }
+            try{
             //symtab, and vector of strings to pass1
             SymbolTable symtab= SymbolTable();
             std::vector<sourceLineStruct> assembledLines =pass1(sourceLines, symtab);
@@ -64,11 +65,15 @@ int main(int argc, char* argv[]){
             //write symtab to symfile 
             std::ofstream symFile(isolatedName+".sym");
             symtab.writeTable(symFile);
-            symFile.close();
+            symFile.close();    
    
             //print file names
             std::cout<<"Successfully assembled source code to files: "<<isolatedName<<".lis and "<<isolatedName<<".sym"<<std::endl;
+            }
             //catch assemblyerror
+            catch(AssemblyException e){
+                std::cout<<"Error during Assembly could not assemble File: "<<fileName<<std::endl;
+            }
 
             sourceFile.close();
         }

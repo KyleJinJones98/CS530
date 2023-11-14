@@ -30,7 +30,7 @@ std::string SymbolTable::getSymbolValue(std::string symbolName){
         std::string addr=  literalTable.at(symbolName).address;
         if(addr==""){
             std::cerr << "Unassigned Literal: " <<symbolName<< std::endl;
-            exit(3);
+            throw AssemblyException();
         }
         return addr;
     }
@@ -38,7 +38,7 @@ std::string SymbolTable::getSymbolValue(std::string symbolName){
     catch(const std::out_of_range& e)
     {
         std::cerr << "Undefined Symbol: " <<symbolName<< std::endl;
-        exit(3);
+        throw AssemblyException();
     }
 }
 
@@ -76,7 +76,7 @@ std::string SymbolTable::getLiteralValue(std::string literalName){
     catch(const std::out_of_range& e)
     {
         std::cerr << "Undefined Literal: " <<literalName<< std::endl;
-        exit(3);
+        throw AssemblyException();
     }
 }
 std::string SymbolTable::getLiteralAddress(std::string literalName){
@@ -89,7 +89,7 @@ std::string SymbolTable::getLiteralAddress(std::string literalName){
     {
 
         std::cerr << "Undefined Literal: " <<literalName<< std::endl;
-        exit(3);
+        throw AssemblyException();
     }
 }
 
@@ -110,11 +110,11 @@ bool SymbolTable::isAbsolute(std::string symbolName){
         std::string addr=  literalTable.at(symbolName).address;
         return true;
     }
-    //if the name is neither symbol or literal print an error and exit
+    //if the name is neither symbol or literal error out
     catch(const std::out_of_range& e)
     {
         std::cerr << "Undefined Symbol: " <<symbolName<< std::endl;
-        exit(3);
+        throw AssemblyException();
     }
 }
 
@@ -141,7 +141,7 @@ void SymbolTable::instantiateLiterals(LocationCounter& locctr, std::vector<sourc
         std::regex_search(literalDefinition,isolatedValue,literalRegex);
             if(isolatedValue.size()!=2){
                 std::cout<<"Error Parsing Literal: "+literalDefinition<<std::endl;
-                exit(3);
+                throw AssemblyException();
             }
 
             std::string isolatedLiteral = isolatedValue.str(1);
@@ -156,7 +156,7 @@ void SymbolTable::instantiateLiterals(LocationCounter& locctr, std::vector<sourc
             }
             else{
                 std::cout<<"Error Parsing Literal: "+literalDefinition<<std::endl;
-                exit(3);
+                throw AssemblyException();
             }
             //update the literaltable
             literalTable[literal.first].address = locctr.getLocationCounter();
@@ -206,7 +206,7 @@ int SymbolTable::getSymbolValueInt(std::string symbolName)
         std::string addr=  literalTable.at(symbolName).address;
         if(addr==""){
             std::cerr << "Unassigned Literal: " <<symbolName<< std::endl;
-            exit(3);
+            throw AssemblyException();
         }
         return toDec(addr);
     }
@@ -214,7 +214,7 @@ int SymbolTable::getSymbolValueInt(std::string symbolName)
     catch(const std::out_of_range& e)
     {
         std::cerr << "Undefined Symbol: " <<symbolName<< std::endl;
-        exit(3);
+        throw AssemblyException();
     }
 }
 
@@ -239,7 +239,7 @@ bool SymbolTable::isDefined(std::string symbolName)
     catch(const std::out_of_range& e)
     {
         std::cerr << "Undefined Symbol: " <<symbolName<< std::endl;
-        exit(3);
+        throw AssemblyException();
     }
 }
 

@@ -12,6 +12,7 @@
 #include "hexConverter.h"
 #include <vector>
 #include <fstream>
+#include "assemblerException.h"
 
 //handles functionality related to the symbol table including updating symbol values, getting values, and writing the symbol table to a file
 
