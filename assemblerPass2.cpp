@@ -32,7 +32,7 @@ std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile,
     //bool hasX = false;
 
     //iterate through instructions
-    for (int i = startingLine; currentLine.operation != "END"; i++) {
+    for (unsigned int i = startingLine; i<(listingFile.size()-1); i++) {
         //get next line
 
         currentLine = listingFile[i];

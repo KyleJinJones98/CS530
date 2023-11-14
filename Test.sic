@@ -8,8 +8,7 @@ LOOP     ADD     TABLE,X
          ADD     TABLE2,X   
          TIX     COUNT      
          JLT     LOOP       
-        +STA     TOTAL      
-         RSUB               
+        +STA     TOTAL              
 MYLIT    LDA    =C'EOF'
 COUNT    RESW    1
 TABLE    RESW    2000
