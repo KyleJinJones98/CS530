@@ -4,6 +4,7 @@
 #include <string>
 #include <iomanip>
 #include <iostream>
+#include "assemblerException.h"
 
 /*
 hex Converter is a Utility class used for converting values to and from hex
@@ -26,7 +27,7 @@ int toDec(std::string hexnumber){
   }
   catch(std::invalid_argument e){
     std::cout<<"Problem converting String: "<<hexnumber<<" To Decimal"<<std::endl;
-    exit(3);
+    throw AssemblyException();
   }
 }
 

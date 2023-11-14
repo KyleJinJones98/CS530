@@ -7,6 +7,7 @@
 #include <stack>
 #include <string>
 #include <queue>
+#include "assemblerException.h"
 //used for resolving addition, subtraction, multiplication and division with symbols, and integers
 //Assumes all operands are either Symbols/Literals or integer strings
 

@@ -28,7 +28,7 @@ Operand performOperation(Operand op1, Operand op2, char function) {
             //we cannot have a relative value in mul
             if(op1.isAbsolute!=0 || op2.isAbsolute!=0){
                 std::cout<<"Multiplication of relative values is not allowed."<<std::endl;
-                exit(3);
+                throw AssemblyException();
             }
             result.value=op1.value*op2.value;
             result.isAbsolute=0;
@@ -37,18 +37,18 @@ Operand performOperation(Operand op1, Operand op2, char function) {
             //we cannot have a relative value in div
             if(op1.isAbsolute!=0 || op2.isAbsolute!=0){
                 std::cout<<"Division of relative values is not allowed."<<std::endl;
-                exit(3);
+                throw AssemblyException();
             }
             if(op2.value==0){
                 std::cerr << "Division by zero is not allowed." << std::endl;
-                exit(1);
+                throw AssemblyException();
             }
             result.value=op1.value/op2.value;
             result.isAbsolute=0;
             return result;
         default:
             std::cerr << "Invalid operator: " << function << std::endl;
-            exit(1);
+            throw AssemblyException();
     }
 }
 
@@ -63,7 +63,7 @@ int getPrecedence(char function){
     }
     else{
         std::cout<<"Unkown function detected "<<function<<std::endl;
-        exit(3);
+        throw AssemblyException();
     }
 }
 
@@ -162,7 +162,7 @@ Operand parseExpressionRecursive(std::string expression, SymbolTable symtab, int
                 //if we are unable to convert to an integer we error out of the program
                 catch(std::invalid_argument e){
                     std::cout<<"Unkown Operand Detected "<<currentToken.tokenString<<" in expression"<<expression<<std::endl;
-                    exit(3);
+                    throw AssemblyException();
                 }
             }
 
@@ -186,12 +186,12 @@ Operand parseExpressionRecursive(std::string expression, SymbolTable symtab, int
     
     if (operands.size() != 1) {
         std::cerr << "Invalid expression." << std::endl;
-        exit(1);
+        throw AssemblyException();
     }
 
     if (operands.top().isAbsolute!=0 && operands.top().isAbsolute!=1) {
         std::cerr << "Invalid matching of relative and Absolute values in expression: " << expression<<std::endl;
-        exit(1);
+        throw AssemblyException();
     }
 
     return operands.top();

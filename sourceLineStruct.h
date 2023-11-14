@@ -6,6 +6,7 @@
 #include<iostream>
 #include <iomanip>
 #include <fstream>
+#include "assemblerException.h"
 //used to store the contents of a line of source in assembler relevant variables
 struct sourceLineStruct
 {
@@ -63,7 +64,7 @@ struct sourceLineStruct
     else{
         std::cout << "Unexpected number of arguments in line of source: "+std::to_string(components.size())<<"\n On Line: "<<cleanedLine<<std::endl;
         //throw "Unexpected number of arguments in line of source: "+ components.size() +"\n";
-        exit(3);
+        throw AssemblyException();
         }
     }
 
