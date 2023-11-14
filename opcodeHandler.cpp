@@ -1,3 +1,9 @@
+/**
+ * CS 530, Fall 2023
+ * 11/14/2023
+ * Joseph Vue, RED ID: 820231744
+ */
+
 #include "opcodeHandler.h"
 //Handles functionality related to the opcode table including checking for valid opcodes, and encoding opcodes
 
