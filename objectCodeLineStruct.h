@@ -114,6 +114,11 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab) {
         int displacement;
 
         //set bits
+        if (targetAddress == "") {
+            hexCode.opcode = encodeOpcode(opcode,false, false);
+            hexCode.address = "000";
+            return hexCode.getObjCode();
+        }
         //if operand is immediate
         if (targetAddress[0] == '#') {
             targetAddress.erase(0,1);
@@ -153,6 +158,7 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab) {
             hexCode.e = "1";
         }
         //if not using extended format
+
         if (hexCode.e != "1") {
             displacement = toDec(currentProgLoc) - toDec(targetAddress);
             //TODO: check if I should use base, if base is in symtab
@@ -175,6 +181,7 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab) {
         }
         //else, if using imediate addressing
         else if (hexCode.e == "1") {
+
             hexCode.address = toHex(toDec(targetAddress), 5);
 
         }
