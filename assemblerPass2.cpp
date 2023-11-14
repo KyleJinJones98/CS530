@@ -29,7 +29,7 @@ std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile,
     std::string tempObjectCode;
 
     sourceLineStruct currentLine = sourceLineStruct();
-    bool hasX = false;
+    //bool hasX = false;
 
     //iterate through instructions
     for (int i = startingLine; currentLine.operation != "END"; i++) {
@@ -72,7 +72,7 @@ std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile,
 
                         for(unsigned int i = 0; i < currentLine.targetAddress.length() ; i++) {
                             if (currentLine.targetAddress[i] == ',') {
-                                hasX = true;
+                                //hasX = true;
                                 currentLine.targetAddress.erase(i, currentLine.targetAddress.length());
                                 break;
                             }
@@ -98,7 +98,7 @@ std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile,
                     operandAddress = "000000";
                 };
                 //FIXME: finish assemble function in objectCodeLine.h - Jacob
-                tempObjectCode = assemble(currentLine, symtab, hasX);
+                tempObjectCode = assemble(currentLine, symtab);
 
 
             };
