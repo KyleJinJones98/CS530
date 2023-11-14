@@ -6,7 +6,10 @@
 #include <fstream>
 #include <iomanip>
 #include "hexConverter.h"
+//Defines the Structs used for creating an object file
+//each struct has its own writeLine function for writing the objectcode to a file
 
+//Header line struct for the start of a program
 struct HeaderLine{
     std::string programName;
     int programLength;
@@ -16,8 +19,9 @@ struct HeaderLine{
     }
 };
 
+
 struct TextLine{
-    //lineaddress starts as undef
+    //lineaddress starts as undef and is only assigned after finding first hexinstruction to add
     int lineAddress = -1;
     int lineLength=0;
     std::vector<std::string> textLines;
@@ -31,6 +35,7 @@ struct TextLine{
     }
 };
 
+//Simple modification record that assumes the only thing we are adding is the program start to any relative variables
 struct ModificationLine{
     int modifiedAddress;
     int modifiedHalfBytes;
@@ -39,6 +44,7 @@ struct ModificationLine{
     }
 };
 
+//Endline for the end of a program
 struct EndLine{
     int endingAddress;
     int startingAddress;
