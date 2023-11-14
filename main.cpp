@@ -7,13 +7,8 @@
 #include "sourceLineStruct.h"
 #include "assemblerPass1.h"
 #include "assemblerPass2.h"
+#include "createObjectFile.h"
 
-void writeListingFile(std::vector<sourceLineStruct> assembledLines, std::string fileName){
-    std::ofstream listingFile(fileName+".lis");
-    for(sourceLineStruct line : assembledLines){
-        line.writeLine(listingFile);
-    }
-}
 
 int main(int argc, char* argv[]){
 
@@ -25,8 +20,15 @@ int main(int argc, char* argv[]){
 
     //read filenames into a string of vectors
     std::vector<std::string> fileNames;
+    bool writeObjectFile =false;
     for(int i =1; i<argc; i++){
-        fileNames.push_back(argv[i]);
+        std::string currentArg = argv[i];
+        if(currentArg=="-o"){
+            writeObjectFile=true;
+        }
+        else{
+            fileNames.push_back(currentArg);
+        }
     }
 
     for(std::string fileName : fileNames){
@@ -69,12 +71,23 @@ int main(int argc, char* argv[]){
    
             //print file names
             std::cout<<"Successfully assembled source code to files: "<<isolatedName<<".lis and "<<isolatedName<<".sym"<<std::endl;
+            try{
+            if(writeObjectFile){
+                generateObjectFile(assembledLines, isolatedName+".ob");
+                std::cout<<"Successfully assembled object code to file: "<<isolatedName<<".ob"<<std::endl;
             }
-            //catch assemblyerror
+            }
+            //catch error writting obj code
             catch(AssemblyException e){
+                std::cout<<"Error during writing object code could not write object code to file File: "<<fileName<<std::endl;
+            }
+
+            //catch assemblyerror
+            }catch(AssemblyException e){
                 std::cout<<"Error during Assembly could not assemble File: "<<fileName<<std::endl;
             }
 
+            
             sourceFile.close();
         }
     }
