@@ -1,3 +1,8 @@
+/**
+ * CS 530, Fall 2023
+ * Joseph Vue, RED ID: 820231744
+ */
+
 #include "expressionParsing.h"
 
 //A Token can be either a value or a function(+-*/) in RPN

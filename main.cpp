@@ -1,3 +1,9 @@
+/**
+ * CS 530, Fall 2023
+ * 11/14/2023
+ * Joseph Vue, RED ID: 820231744
+ */
+
 //Main File for the assembler program
 //handles commands, reading/writing to files
 #include <string>

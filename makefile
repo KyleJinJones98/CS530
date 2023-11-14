@@ -1,4 +1,4 @@
-#Kyle Jones
+#Kyle Jones, Joseph Vue (Red ID: 820231744)
 #cssc2623
 #CS530 Fall 2023
 #Assignment 2
