@@ -33,19 +33,24 @@ void handleDirective(std::string label, std::string operation, std::string targe
     //we tell the symbol table to instantiate literals with the given location counter
     case Directive::LTORG:
         symtab.instantiateLiterals(locctr,output);
+        break;
     //we reset the location counter to the given address
     case Directive::ORG:
         locctr.setLocationCounter(parseExpression(targetAddress,symtab).value);
+        break;
     case Directive::EQU:
         symtab.addSymbol(label, targetAddress);
+        break;
     case Directive::BYTE:
         if(label!=""){
             symtab.addSymbol(label, targetAddress);
         }
+        break;
     case Directive::WORD:
         if(label!=""){
             symtab.addSymbol(label, targetAddress);
         }
+        break;
     default:
         break;
     }
