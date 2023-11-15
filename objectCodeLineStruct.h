@@ -64,7 +64,7 @@ struct formatThreeAndFourObjCode {
 };
 
 inline
-string assemble(sourceLineStruct instruction, SymbolTable pass1symTab) {
+string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX, bool hasBase, std::string baseLoc) {
     //TODO: finish getopcodeformat in opcodeHandler.cpp
     string opcode = instruction.operation;
     int insFormat = getOpcodeFormat(opcode);
@@ -111,7 +111,10 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab) {
         string currentProgLoc = instruction.lineAddress;
         string targetAddress = instruction.targetAddress;
         string indexAmount = "";
+        string BASE ="";
         int displacement;
+        bool isImmediate = false;
+
 
         //set bits
         if (targetAddress == "") {
@@ -119,16 +122,23 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab) {
             hexCode.address = "000";
             return hexCode.getObjCode();
         }
+        if (hasX) {
+            hexCode.x = "1";
+        }
+
         //if operand is immediate
         if (targetAddress[0] == '#') {
             targetAddress.erase(0,1);
-
             if (symTab.isSymbol(targetAddress)) {
                 targetAddress = symTab.getSymbolValue(targetAddress);
+
+            }
+            else {
+                isImmediate = true;
             }
             hexCode.address = targetAddress;
-            hexCode.n = '0';
-            hexCode.i = '1';
+            hexCode.n = "0";
+            hexCode.i = "1";
         }
         //if operand is using indirect addressing
         if (targetAddress[0] == '@') {
@@ -138,39 +148,38 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab) {
                 targetAddress = symTab.getSymbolValue(targetAddress);
             }
             hexCode.address = targetAddress;
-            hexCode.n = '1';
-            hexCode.i = '0';
+            hexCode.n = "1";
+            hexCode.i = "0";
             hexCode.opcode = encodeOpcode(opcode, hexCode.n == "1", hexCode.i == "1");
             return hexCode.getObjCode();
         }
-        //check for indexed addressing, get indexAmount
-        for(unsigned int i = 0; i < targetAddress.length(); i ++) {
-            if (targetAddress[i] == ',') {
-                hexCode.x = '1';
-                while (i < targetAddress.length()) {
-                    indexAmount.append(&targetAddress[i]);
-                    i++;
-                };
-            }
-        }
+
         //check if base or pc relative will be used, set b and p accordingly
         if (instruction.operation[0] == '+') {
             hexCode.e = "1";
         }
         //if not using extended format
 
-        if (hexCode.e != "1") {
-            displacement = toDec(currentProgLoc) - toDec(targetAddress);
+        if ((hexCode.e != "1") &&(!isImmediate)) {
+            displacement = toDec(targetAddress)- toDec(currentProgLoc);
             //TODO: check if I should use base, if base is in symtab
             if ((-2048 <= displacement) && (2047 >= displacement)) {
                 hexCode.p = "1";
 
-            } else {
-                hexCode.b = "0";
-                hexCode.i = "1";
-                hexCode.p = "0";
-                hexCode.e = "1";
-                hexCode.n = "1";
+            }
+            else if(hasBase) {
+                displacement = toDec(targetAddress) - toDec(baseLoc);
+                if ((displacement > 0) && (displacement < 4095)) {
+                    hexCode.b = "1";
+                    hexCode.p = "0";
+                }
+                else {
+                    hexCode.b = "0";
+                    hexCode.i = "1";
+                    hexCode.p = "0";
+                    hexCode.e = "1";
+                    hexCode.n = "1";
+                }
             }
         }
 
@@ -179,11 +188,30 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab) {
 
             hexCode.address = toHex(displacement,3);
         }
+        else if (hexCode.b == "1") {
+            hexCode.address = toHex(displacement, 3);
+        }
+        else {
+            hexCode.address = targetAddress;
+        }
         //else, if using imediate addressing
-        else if (hexCode.e == "1") {
+         if (hexCode.e == "1") {
 
-            hexCode.address = toHex(toDec(targetAddress), 5);
+            hexCode.address = toHex(toDec(hexCode.address), 4);
 
+        }
+        if (isImmediate) {
+            if(hexCode.e == "1") {
+                hexCode.address = toHex(toDec(targetAddress), 5);
+            }
+            else {
+                hexCode.address = toHex(toDec(targetAddress), 3);
+            }
+        }
+        if (hexCode.address[0] == 'F') {
+            if (hexCode.address.length() > 3) {
+                hexCode.address.erase(0, hexCode.address.length()-3);
+            }
         }
         //TODO: add base relative address calculation
         //get opcode + n + i (encodeOpcode adds these for us)

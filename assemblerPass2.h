@@ -11,6 +11,6 @@
 #include <vector>
 #include <iostream>
 
-std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile, SymbolTable pass1SymTab); 
+std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile, SymbolTable pass1SymTab);
 
 #endif
