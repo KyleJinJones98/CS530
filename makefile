@@ -1,5 +1,4 @@
-#Kyle Jones, Joseph Vue (Red ID: 820231744)
-#cssc2623
+#Kyle Jones (RED ID: 819938646), Joseph Vue (RED ID: 820231744), Jake Opatz (RED ID: 826638326)
 #CS530 Fall 2023
 #Assignment 2
 #makefile
