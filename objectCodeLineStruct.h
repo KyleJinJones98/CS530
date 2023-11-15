@@ -82,8 +82,7 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX
     if (insFormat == 1) {
         //Return type 1 ins form in hex representation
         formatOneObjCode hexCode = formatOneObjCode();
-        
-        checkOpcode(opcode);
+        hexCode.byte= encodeOpcode(opcode,false,false);
         return hexCode.getObjCode();
     }
     else if (insFormat == 2) {
