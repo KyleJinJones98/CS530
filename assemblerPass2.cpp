@@ -84,7 +84,7 @@ std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile,
                 if((currentLine.targetAddress[0] >= 64) && (currentLine.targetAddress[0] <= 122 )) {
 
                     //check if target address includes a comma
-                    if(currentLine.targetAddress[currentLine.targetAddress.length() - 1] == 'X') {
+                    if(currentLine.targetAddress[currentLine.targetAddress.length() - 1] == 'X' && getOpcodeFormat(currentLine.operation)!=2) {
 
                         for(unsigned int i = 0; i < currentLine.targetAddress.length() ; i++) {
                             if (currentLine.targetAddress[i] == ',') {
