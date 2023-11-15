@@ -1,5 +1,6 @@
 /**
  * CS 530, Fall 2023
+ * 11/14/2023
  * Joseph Vue, RED ID: 820231744
  */
 
@@ -9,7 +10,9 @@
 #include "assemblerPass2.h"
 
 std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile, SymbolTable pass1SymTab) {
-
+    std::string baseLoc;
+    bool hasBase = false;
+    bool hasX = false;
 
     SymbolTable symtab = pass1SymTab;
     std::vector<sourceLineStruct> listingFile = P1listingFile;
@@ -34,13 +37,14 @@ std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile,
     std::string tempObjectCode;
 
     sourceLineStruct currentLine = sourceLineStruct();
-    //bool hasX = false;
+
 
     //iterate through instructions
     for (unsigned int i = startingLine; i<(listingFile.size()-1); i++) {
         //get next line
 
         currentLine = listingFile[i];
+         hasX = false;
         //if not comment line
         if(currentLine.label != ".") {
 
@@ -57,6 +61,11 @@ std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile,
                 tempObjectCode = toHex(currentLine.targetAddress, 6);
                 listingFile[i].hexInstruction = tempObjectCode;
 
+                continue;
+            }
+            else if (currentLine.operation == "BASE") {
+                hasBase = true;
+                baseLoc = currentLine.lineAddress;
                 continue;
             }
             if (checkDirective(currentLine.operation)) {
@@ -77,7 +86,7 @@ std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile,
 
                         for(unsigned int i = 0; i < currentLine.targetAddress.length() ; i++) {
                             if (currentLine.targetAddress[i] == ',') {
-                                //hasX = true;
+                                hasX = true;
                                 currentLine.targetAddress.erase(i, currentLine.targetAddress.length());
                                 break;
                             }
@@ -103,7 +112,7 @@ std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile,
                     operandAddress = "000000";
                 };
                 //FIXME: finish assemble function in objectCodeLine.h - Jacob
-                tempObjectCode = assemble(currentLine, symtab);
+                tempObjectCode = assemble(currentLine, symtab, hasX, hasBase, baseLoc);
 
 
             };
