@@ -72,7 +72,6 @@ bool SymbolTable::isSymbol(std::string symbolName){
     }
     catch(const std::out_of_range& e)
     {
-        return false;
     }
 
     try
