@@ -11,6 +11,8 @@ void SymbolTable::addLiteral(std::string literalName, std::string literalValue){
     //need to add check literalvalue against already existing literals
     //if already in table no need to readd it
     literal newLiteral =  {literalValue, ""};
+    newLiteral.insertionOrder=symNumber;
+    symNumber++;
     literalTable[literalName] = newLiteral;
 }
 
@@ -18,6 +20,8 @@ void SymbolTable::addLiteral(std::string literalName, std::string literalValue){
 void SymbolTable::addSymbol(std::string symbolName, std::string symbolValue){
     symbol newSymbol = symbol();
     newSymbol.value=symbolValue;
+    newSymbol.insertionOrder=symNumber;
+    symNumber++;
     symbolTable[symbolName] = newSymbol;
 }
 
@@ -45,6 +49,17 @@ std::string SymbolTable::getSymbolValue(std::string symbolName){
     {
         std::cerr << "Undefined Symbol: " <<symbolName<< std::endl;
         throw AssemblyException();
+    }
+}
+
+//increments all relative symbols greater than a given address
+//used when an instruction is extended
+void SymbolTable::incrementAddresses(std::string modAddress){
+    int addr = toDec(modAddress);
+    for (auto symbol : symbolTable){
+        if(!symbol.second.absoluteFlag&&symbol.second.intValue>addr){
+            symbol.second.intValue+=1;
+        }
     }
 }
 
