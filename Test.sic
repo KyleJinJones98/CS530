@@ -1,17 +1,18 @@
-8:46 PM 11/18/2020.  SOURCE CODE FOR THE XE VERSION OF THE SIC FAMILY OF COMPUTER
-SUM      START   0                      SAMPLE PROGRAM
-FIRST    LDX    #0          
-         LDA    #0          
-        +LDB    #TABLE2     
-         BASE    TABLE2
-LOOP     ADD     TABLE,X    
-         ADD     TABLE2,X   
-         TIX     COUNT      
-         JLT     LOOP       
-        +STA     TOTAL              
-MYLIT    LDA    =C'EOF'
-COUNT    RESW    1
-TABLE    RESW    2000
-TABLE2   RESW    2000
-TOTAL    RESW    1
-         END     FIRST
+.  SOURCE CODE FOR THE XE VERSION OF THE SIC FAMILY OF COMPUTER
+SUM       START   0                      SAMPLE PROGRAM
+FIRST     LDX    #0          
+          LDA    #0          
+         +LDB    #TABLE2     
+          BASE    TABLE2
+LOOP      ADD     TABLE,X    
+          ADD     TABLE2,X   
+          TIX     COUNT      
+          JLT     LOOP       
+         +STA     TOTAL      
+          RSUB               
+MYLIT     LDA    =C'EOF'
+COUNT     RESW    1
+TABLE     RESW    2000
+TABLE2    RESW    2000
+TOTAL     RESW    1
+          END     FIRST
