@@ -166,7 +166,7 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX
         //if not using extended format
 
         if ((hexCode.e != "1") &&(!isImmediate)) {
-            displacement = toDec(targetAddress)- toDec(currentProgLoc);
+            displacement = toDec(targetAddress)- (toDec(currentProgLoc) + 3) ;
             //TODO: check if I should use base, if base is in symtab
             if ((-2048 <= displacement) && (2047 >= displacement)) {
                 hexCode.p = "1";

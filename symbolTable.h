@@ -42,15 +42,14 @@ class SymbolTable{
     //tracks symbols in the source code
 private:
     int symNumber = 0;
-    std::map<std::string, symbol> symbolTable{
-    };
+
 
     //tracks literals in the source code
     std::map<std::string, literal> literalTable{
     };
 
     //spacing constants for table writing to file
-    const int SYM = 6;
+
     const int VAL = 6;
     const int FLAG = 5;
     const int NAM = 6;
@@ -58,6 +57,9 @@ private:
     const int ADDR = 10;
 
 public:
+    const int SYM = 6;
+    std::map<std::string, symbol> symbolTable{
+    };
   //used to add a new literal to the literal table
   void addLiteral(std::string literalName, std::string literalValue);
 

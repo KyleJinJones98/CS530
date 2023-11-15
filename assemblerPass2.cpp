@@ -8,11 +8,15 @@
 // Created by Jacob Opatz   on 10/31/23.
 //
 #include "assemblerPass2.h"
+#include "assemblerPass1.h"
 
 std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile, SymbolTable pass1SymTab) {
     std::string baseLoc;
     bool hasBase = false;
     bool hasX = false;
+    int opcodeFormat;
+    int numForceExtended = 0;
+    int objectCodeLength = 100;
 
     SymbolTable symtab = pass1SymTab;
     std::vector<sourceLineStruct> listingFile = P1listingFile;
@@ -42,15 +46,25 @@ std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile,
     //iterate through instructions
     for (unsigned int i = startingLine; i<(listingFile.size()-1); i++) {
         //get next line
-
+        objectCodeLength = 100;
         currentLine = listingFile[i];
-         hasX = false;
+        if(currentLine.lineAddress != "" && numForceExtended != 0) {
+            listingFile[i].lineAddress = toHex((toDec(currentLine.lineAddress) + (numForceExtended)), 4);
+            if(symtab.isSymbol(currentLine.label)) {
+                symtab.symbolTable.at(currentLine.label).value = toHex((toDec(symtab.symbolTable.at(currentLine.label).value) + 1), 4);
+            }
+        }
+        hasX = false;
+        opcodeFormat = getOpcodeFormat(currentLine.operation);
         //if not comment line
         if(currentLine.label != ".") {
 
             // if opcode = "BYTE" or "WORD"
             //TODO: process other directives, use assemblerDirectivesPass1.cpp
-            if (currentLine.operation == "BYTE") {
+            if(currentLine.operation == "START") {
+                continue;
+            }
+            else if (currentLine.operation == "BYTE") {
                 //convert constant to object code
                 tempObjectCode = currentLine.targetAddress;
                 listingFile[i].hexInstruction = tempObjectCode;
@@ -115,8 +129,20 @@ std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile,
                     operandAddress = "000000";
                 };
                 //FIXME: finish assemble function in objectCodeLine.h - Jacob
-                tempObjectCode = assemble(currentLine, symtab, hasX, hasBase, baseLoc);
 
+
+
+
+                if (opcodeFormat == 3) {
+                    objectCodeLength = 6;
+                }
+                tempObjectCode = assemble(currentLine, symtab, hasX, hasBase, baseLoc);
+                if(tempObjectCode.length() > objectCodeLength) {
+                    numForceExtended += 1;
+                    listingFile[i].operation = "+" + currentLine.operation;
+
+
+                }
 
             };
 
@@ -128,7 +154,9 @@ std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile,
         }
 
     }
-
+    if(numForceExtended != 0) {
+        listingFile = pass2(listingFile, symtab);
+    }
     return listingFile;
 
 }
