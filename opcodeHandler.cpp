@@ -108,6 +108,12 @@ int getOpcodeSize(std::string opcode){
     if(opcode[0]=='+'){
         return 4;
     }
+    if(getOpcodeFormat(opcode)==1){
+        return 1;
+    }
+    if(getOpcodeFormat(opcode)==2){
+        return 2;
+    }
     return 3;
 }
 
