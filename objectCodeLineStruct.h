@@ -24,6 +24,7 @@ using namespace std;
 #include <vector>
 #include <iostream>
 #include <iomanip>
+#include <unordered_map>
 
 struct formatOneObjCode{
     std::string byte;
@@ -31,6 +32,7 @@ struct formatOneObjCode{
          return byte;
     };
 };
+
 
 struct formatTwoObjCode {
     std::string opcode;
@@ -87,23 +89,18 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX
     else if (insFormat == 2) {
         //Return type 2 ins form in hex representation
         formatTwoObjCode hexCode = formatTwoObjCode(); 
-        string reg1, reg2, comma, reg1Temp, reg2Temp;
-        
-        //to extract register information from the read instruction
-        std::istringstream iss(opcode);
-        if (iss >> opcode >> reg1Temp >> comma >> reg2Temp)
-        {
-            //remove commas from register strings
-            reg1 = reg1Temp;
-            reg2 = reg2Temp;
-            reg1.erase(std::remove(reg1.begin(), reg1.end(), ','), reg1.end());
-            reg2.erase(std::remove(reg2.begin(), reg2.end(), ','), reg2.end());
-        }
-
+        //maps register name to number
+        unordered_map<string, string> registers = {
+    {"A","0"}, {"X","1"}, {"L","2"}, {"B","3"}, {"S","4"}, {"T","5"}, {"F","6"}, {"PC","8"}, {"SW","9"}
+};
+        int commaLoc = instruction.targetAddress.find(",");
+        std::string reg1= instruction.targetAddress.substr(0,commaLoc);
+        std::string reg2 = instruction.targetAddress.substr(commaLoc+1);
+    
         //create the format 2 object code
-        hexCode.opcode = opcode;
-        hexCode.reg1 = reg1;
-        hexCode.reg2 = reg2;
+        hexCode.opcode = encodeOpcode(opcode, false, false);
+        hexCode.reg1 = registers[reg1];
+        hexCode.reg2 = registers[reg2];
 
         return hexCode.getObjCode();
     }
