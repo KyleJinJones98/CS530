@@ -174,7 +174,7 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX
             }
             else if(hasBase) {
                 displacement = toDec(targetAddress) - toDec(baseLoc);
-                if ((displacement > 0) && (displacement < 4095)) {
+                if ((displacement >= 0) && (displacement < 4095)) {
                     hexCode.b = "1";
                     hexCode.p = "0";
                 }
@@ -202,7 +202,7 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX
         //else, if using imediate addressing
          if (hexCode.e == "1") {
 
-            hexCode.address = toHex(toDec(hexCode.address), 4);
+            hexCode.address = toHex(toDec(hexCode.address), 5);
 
         }
         if (isImmediate) {
