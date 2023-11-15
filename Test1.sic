@@ -1,0 +1,14 @@
+. A Simplified First Test
+Test1      START   0                      Comment past 40 chars should not be considered
+FIRST    LDX    #0          
+.  Comment Line in middle of Source
+LOOP     ADD     MYLIT,X    
+MYLIT    LDA    =C'EOF'
+LTORG
+COUNT    RESW    10
+TOTAL    RESB    5
+        FLOAT   
+        MULR    X,T
+        MYSYM     EQU     5          
+        LDA  #MYSYM*5
+        END     FIRST
