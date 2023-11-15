@@ -179,14 +179,14 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX
                     hexCode.p = "0";
                 }
                 else {
-                    hexCode.b = "0";
-                    hexCode.i = "1";
-                    hexCode.p = "0";
+
                     hexCode.e = "1";
-                    hexCode.n = "1";
+
+
                 }
             }
         }
+
 
         //bits are set, now calculate address field from target address
         if (hexCode.p == "1") {
