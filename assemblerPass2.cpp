@@ -65,7 +65,7 @@ std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile,
             }
             else if (currentLine.operation == "BASE") {
                 hasBase = true;
-                baseLoc = currentLine.lineAddress;
+                baseLoc = symtab.getSymbolValue(currentLine.targetAddress);
                 continue;
             }
             if (checkDirective(currentLine.operation)) {

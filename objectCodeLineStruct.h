@@ -174,7 +174,7 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX
             }
             else if(hasBase) {
                 displacement = toDec(targetAddress) - toDec(baseLoc);
-                if ((displacement > 0) && (displacement < 4095)) {
+                if ((displacement >= 0) && (displacement < 4095)) {
                     hexCode.b = "1";
                     hexCode.p = "0";
                 }
