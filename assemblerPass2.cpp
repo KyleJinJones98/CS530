@@ -94,7 +94,10 @@ std::vector<sourceLineStruct> pass2(std::vector<sourceLineStruct> P1listingFile,
 
                     }
                     //store symbol value in operand field
-                    currentLine.targetAddress = symtab.getSymbolValue(currentLine.targetAddress);
+                    if(symtab.isSymbol(currentLine.targetAddress)){
+                        currentLine.targetAddress = symtab.getSymbolValue(currentLine.targetAddress);
+                    }
+                    
 
                 }
 
