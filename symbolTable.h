@@ -15,7 +15,6 @@
 #include "sourceLineStruct.h"
 #include <vector>
 #include "locationCounter.h"
-#include <regex>
 #include <iostream>
 #include "hexConverter.h"
 #include <vector>

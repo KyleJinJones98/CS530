@@ -58,9 +58,9 @@ std::string SymbolTable::getSymbolValue(std::string symbolName){
 //used when an instruction is extended
 void SymbolTable::incrementAddresses(std::string modAddress){
     int addr = toDec(modAddress);
-    for (auto symbol : symbolTable){
-        if(!symbol.second.absoluteFlag&&symbol.second.intValue>addr){
-            symbol.second.intValue+=1;
+    for (auto sym : symbolTable){
+        if(!sym.second.absoluteFlag&&sym.second.intValue>addr){
+            symbolTable[sym.first].intValue+=1;
         }
     }
 }
@@ -152,21 +152,17 @@ std::vector<std::string> SymbolTable::getAllSymbols(){
 void SymbolTable::instantiateLiterals(LocationCounter& locctr, std::vector<sourceLineStruct>& output)
 {
     //regex is here to isolate the type and value of the literal
-    std::regex literalRegex("=[C,X]'(.*)'");
+    //std::regex literalRegex("=[C,X]'(.*)'");
     for(auto literal : literalTable) {
 
         //only assign literals who have no assigned address
         if(literal.second.address==""){
         sourceLineStruct currentLiteral = sourceLineStruct();
         std::string literalDefinition = literal.second.value;
-        std::smatch isolatedValue;
-        std::regex_search(literalDefinition,isolatedValue,literalRegex);
-            if(isolatedValue.size()!=2){
-                std::cout<<"Error Parsing Literal: "+literalDefinition<<std::endl;
-                throw AssemblyException();
-            }
 
-            std::string isolatedLiteral = isolatedValue.str(1);
+            size_t litStart = literalDefinition.find("'");
+            std::string isolatedLiteral = literalDefinition.substr(litStart+1);
+            isolatedLiteral.erase(isolatedLiteral.size()-1);
             //if the literal is a charstring we need to convert to ascii and then to hex first
             if(literalDefinition[1]=='C'){
                 isolatedLiteral = toHex(isolatedLiteral,6);
