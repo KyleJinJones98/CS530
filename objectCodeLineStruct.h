@@ -136,6 +136,7 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX
 
             }
             else {
+                targetAddress = toHex(parseExpression(targetAddress,symTab).value,6);
                 isImmediate = true;
             }
             hexCode.address = targetAddress;
@@ -143,17 +144,23 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX
             hexCode.i = "1";
         }
         //if operand is using indirect addressing
-        if (targetAddress[0] == '@') {
+        else if (targetAddress[0] == '@') {
             targetAddress.erase(0,1);
 
             if (symTab.isSymbol(targetAddress)) {
                 targetAddress = symTab.getSymbolValue(targetAddress);
+            }
+            else{
+                targetAddress = toHex(parseExpression(targetAddress,symTab).value,6);
             }
             hexCode.address = targetAddress;
             hexCode.n = "1";
             hexCode.i = "0";
             hexCode.opcode = encodeOpcode(opcode, hexCode.n == "1", hexCode.i == "1");
             return hexCode.getObjCode();
+        }
+        else{
+            targetAddress = toHex(parseExpression(targetAddress,symTab).value,6);
         }
 
         //check if base or pc relative will be used, set b and p accordingly
@@ -163,7 +170,7 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX
         //if not using extended format
 
         if ((hexCode.e != "1") &&(!isImmediate)) {
-            displacement = toDec(targetAddress)- (toDec(currentProgLoc) + 3) ;
+            displacement = toDec(targetAddress)- toDec(currentProgLoc);
             //TODO: check if I should use base, if base is in symtab
             if ((-2048 <= displacement) && (2047 >= displacement)) {
                 hexCode.p = "1";
