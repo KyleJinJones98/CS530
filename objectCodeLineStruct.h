@@ -202,7 +202,7 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX
         //else, if using imediate addressing
          if (hexCode.e == "1") {
 
-            hexCode.address = toHex(toDec(hexCode.address), 4);
+            hexCode.address = toHex(toDec(hexCode.address), 5);
 
         }
         if (isImmediate) {
