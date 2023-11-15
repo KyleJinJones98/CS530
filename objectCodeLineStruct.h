@@ -22,7 +22,6 @@ using namespace std;
 #include <vector>
 #include <iostream>
 #include <iomanip>
-//TODO: make actual assemble function
 
 struct formatOneObjCode{
     std::string byte;
@@ -77,14 +76,14 @@ string assemble(sourceLineStruct instruction, SymbolTable pass1symTab, bool hasX
     //int insFormat = 3;
     
     if (insFormat == 1) {
-        //TODO: return type 1 ins form in hex representation
+        //Return type 1 ins form in hex representation
         formatOneObjCode hexCode = formatOneObjCode();
         
         checkOpcode(opcode);
         return hexCode.getObjCode();
     }
     else if (insFormat == 2) {
-        //TODO: return type 2 ins form in hex representation
+        //Return type 2 ins form in hex representation
         formatTwoObjCode hexCode = formatTwoObjCode(); 
         string reg1, reg2, comma, reg1Temp, reg2Temp;
         
