@@ -8,7 +8,7 @@
 #define symbolTable_H
 
 #include <string>
-#include <unordered_map>
+#include <map>
 #include <iostream>
 #include "sourceLineStruct.h"
 #include <vector>
@@ -27,21 +27,26 @@ struct symbol{
     bool absoluteFlag; // false = relative true = absolute
     int intValue;
     bool isDefined=false;
+    //used to iterate through symbols in order of which was added first
+    int insertionOrder;
 };
 
 struct literal{
     std:: string value;
     std:: string address;
+    //used to iterate through literals in order of which was added first
+    int insertionOrder;
 };
 
 class SymbolTable{
     //tracks symbols in the source code
 private:
-    std::unordered_map<std::string, symbol> symbolTable{
+    int symNumber = 0;
+    std::map<std::string, symbol> symbolTable{
     };
 
     //tracks literals in the source code
-    std::unordered_map<std::string, literal> literalTable{
+    std::map<std::string, literal> literalTable{
     };
 
     //spacing constants for table writing to file
@@ -93,7 +98,11 @@ public:
   //returns the full list of all symbolnames in the table
   std::vector<std::string> getAllSymbols();
 
+  //writes the symbol and literal tables to a given file
   void writeTable(std::ofstream &symFile);
+
+  //used to account for instructions becoming extended
+  void SymbolTable::incrementAddresses(std::string modAddress);
 
 };
 
