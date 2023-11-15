@@ -2,6 +2,8 @@
  * CS 530, Fall 2023
  * 11/14/2023
  * Joseph Vue, RED ID: 820231744
+ * Jake Opatz, RED ID: 826638326
+ * Kyle Jones, RED ID: 819938646
  */
 
 #include "opcodeHandler.h"
@@ -105,6 +107,12 @@ int getOpcodeSize(std::string opcode){
     //if it is extended return 4, otherwise we return 3
     if(opcode[0]=='+'){
         return 4;
+    }
+    if(getOpcodeFormat(opcode)==1){
+        return 1;
+    }
+    if(getOpcodeFormat(opcode)==2){
+        return 2;
     }
     return 3;
 }
