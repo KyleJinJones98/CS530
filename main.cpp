@@ -39,6 +39,12 @@ int main(int argc, char* argv[]){
 
     for(std::string fileName : fileNames){
 
+        int endOfName = fileName.find(".");
+        std::string isolatedName= fileName.substr(0,endOfName);
+        if(fileName.substr(endOfName)!=".sic"){
+            std::cout << "File of wrong type: " <<fileName.substr(endOfName)<<" Expected: .sic" << std::endl;
+        }
+        else{
         //could do some error checking here to ensure the fileName is a proper .sic file
         std::ifstream sourceFile(fileName);
 
@@ -60,23 +66,21 @@ int main(int argc, char* argv[]){
             assembledLines = pass2(assembledLines,symtab);
             //pass1 sourceline struct to pass2
             //pass2 sourceline struct to write to listing file
-            int endOfName = fileName.find(".");
-            std::string isolatedName= fileName.substr(0,endOfName);
 
             //Write Listing File
-            std::ofstream listingFile(isolatedName+".lis");
+            std::ofstream listingFile(isolatedName+".l");
             for(sourceLineStruct line : assembledLines){
                 line.writeLine(listingFile);
             }
             listingFile.close();
 
             //write symtab to symfile 
-            std::ofstream symFile(isolatedName+".sym");
+            std::ofstream symFile(isolatedName+".st");
             symtab.writeTable(symFile);
             symFile.close();    
    
             //print file names
-            std::cout<<"Successfully assembled source code to files: "<<isolatedName<<".lis and "<<isolatedName<<".sym"<<std::endl;
+            std::cout<<"Successfully assembled source code to files: "<<isolatedName<<".l and "<<isolatedName<<".st"<<std::endl;
             try{
             if(writeObjectFile){
                 generateObjectFile(assembledLines, isolatedName+".ob");
@@ -95,6 +99,7 @@ int main(int argc, char* argv[]){
 
             
             sourceFile.close();
+        }
         }
     }
     exit(0);
