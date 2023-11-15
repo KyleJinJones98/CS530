@@ -1,6 +1,10 @@
+/**
+ * CS 530, Fall 2023
+ * 11/14/2023
+ * Joseph Vue, RED ID: 820231744
+ */
+
 #include "locationCounter.h"
-
-
 
 LocationCounter::LocationCounter()
 {

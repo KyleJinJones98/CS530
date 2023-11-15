@@ -1,3 +1,8 @@
+/**
+ * CS 530, Fall 2023
+ * 11/14/2023
+ * Joseph Vue, RED ID: 820231744
+ */
 
 #include "assemblerPass1.h"
 
@@ -22,9 +27,9 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
 
     //do error checking to ensure program is started correctly
     if(firstLine.operation!="START"){
-        std::cout<<"Program not started with correct opcode: Start. \n Incorrect opcode: "+firstLine.operation + "\n";
+        std::cout<<"Program not started with correct opcode: Start. Actual opcode: "+firstLine.operation + "\n";
        //throw "Program not started with correct opcode: Start. \n Incorrect opcode: "+firstLine.operation + "\n";
-       exit(3);
+       throw AssemblyException();
     }
 
     //if our starting address is 0, this is a relocatable program and symbol addresses are relative
@@ -42,6 +47,7 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
     //loop through the rest of the program lines from after the first line to just before the end line
     for(unsigned int i = startingLine+1; i<(sourceLines.size()-1); i++){
         sourceLineStruct currentLine = sourceLineStruct();
+        try{
         currentLine.getLineComponents(sourceLines[i]); //extract the line components from the current source line
         if(currentLine.label!="."){
         currentLine.lineAddress = locctr.getLocationCounter();//assign address to current line of source
@@ -49,6 +55,7 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
 
         //append the proccessed line struct
         output.push_back(currentLine);
+        int currentLineIndex = output.size()-1;
 
         //if the line is not a comment line we process it further
         if(currentLine.label!="."){
@@ -78,12 +85,23 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
             //increment locctr if directive requires it
             int bytes = getDirectiveSize(symtab,currentLine.operation, currentLine.targetAddress);
             locctr.incrementLocationCounter(bytes);
+            
         }
         else{
             std::cout<<"Unregocnized command: "+ currentLine.operation+ " at line: "+ std::to_string(i)+"\n";
-            exit(3);
+            throw AssemblyException();
         }
         }
+        //replace * with location counter
+        if (output[currentLineIndex].targetAddress=="*"){
+            output[currentLineIndex].targetAddress = std::to_string(toDec(locctr.getLocationCounter()));
+        }
+        }
+        catch(AssemblyException e){
+            std::cout<<"Assembly Pass 1 Error on Line "<<i<<" : "<<sourceLines[i]<<std::endl;
+            throw AssemblyException();
+        }
+
     }
 
     //Assign any unassigned literals
@@ -105,10 +123,12 @@ std::vector<sourceLineStruct> pass1(std::vector<std::string> sourceLines, Symbol
     if(endLine.operation!="END"){
         std::cout<<"Program not started with correct opcode: END. \n Incorrect opcode: "+endLine.operation + "\n";
        //throw "Program not started with correct opcode: Start. \n Incorrect opcode: "+firstLine.operation + "\n";
-       exit(3);
+       throw AssemblyException();
     }
     endLine.lineAddress=locctr.getLocationCounter();
     output.push_back(endLine);
-
     return output;
+    
+
+
 }

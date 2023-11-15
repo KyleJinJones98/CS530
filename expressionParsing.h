@@ -1,3 +1,8 @@
+/**
+ * CS 530, Fall 2023
+ * Joseph Vue, RED ID: 820231744
+ */
+
 #ifndef expressionParsing_H
 #define expressionParsing_H
 
@@ -7,6 +12,7 @@
 #include <stack>
 #include <string>
 #include <queue>
+#include "assemblerException.h"
 //used for resolving addition, subtraction, multiplication and division with symbols, and integers
 //Assumes all operands are either Symbols/Literals or integer strings
 

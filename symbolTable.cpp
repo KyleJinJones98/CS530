@@ -1,3 +1,9 @@
+/**
+ * CS 530, Fall 2023
+ * 11/14/2023
+ * Joseph Vue, RED ID: 820231744
+ */
+
 #include "symbolTable.h"
 //add a new literal to the literalTable
 //However, does not define its address, which is assumed to be defined later
@@ -30,7 +36,7 @@ std::string SymbolTable::getSymbolValue(std::string symbolName){
         std::string addr=  literalTable.at(symbolName).address;
         if(addr==""){
             std::cerr << "Unassigned Literal: " <<symbolName<< std::endl;
-            exit(3);
+            throw AssemblyException();
         }
         return addr;
     }
@@ -38,7 +44,7 @@ std::string SymbolTable::getSymbolValue(std::string symbolName){
     catch(const std::out_of_range& e)
     {
         std::cerr << "Undefined Symbol: " <<symbolName<< std::endl;
-        exit(3);
+        throw AssemblyException();
     }
 }
 
@@ -76,7 +82,7 @@ std::string SymbolTable::getLiteralValue(std::string literalName){
     catch(const std::out_of_range& e)
     {
         std::cerr << "Undefined Literal: " <<literalName<< std::endl;
-        exit(3);
+        throw AssemblyException();
     }
 }
 std::string SymbolTable::getLiteralAddress(std::string literalName){
@@ -89,7 +95,7 @@ std::string SymbolTable::getLiteralAddress(std::string literalName){
     {
 
         std::cerr << "Undefined Literal: " <<literalName<< std::endl;
-        exit(3);
+        throw AssemblyException();
     }
 }
 
@@ -110,11 +116,11 @@ bool SymbolTable::isAbsolute(std::string symbolName){
         std::string addr=  literalTable.at(symbolName).address;
         return true;
     }
-    //if the name is neither symbol or literal print an error and exit
+    //if the name is neither symbol or literal error out
     catch(const std::out_of_range& e)
     {
         std::cerr << "Undefined Symbol: " <<symbolName<< std::endl;
-        exit(3);
+        throw AssemblyException();
     }
 }
 
@@ -141,7 +147,7 @@ void SymbolTable::instantiateLiterals(LocationCounter& locctr, std::vector<sourc
         std::regex_search(literalDefinition,isolatedValue,literalRegex);
             if(isolatedValue.size()!=2){
                 std::cout<<"Error Parsing Literal: "+literalDefinition<<std::endl;
-                exit(3);
+                throw AssemblyException();
             }
 
             std::string isolatedLiteral = isolatedValue.str(1);
@@ -156,7 +162,7 @@ void SymbolTable::instantiateLiterals(LocationCounter& locctr, std::vector<sourc
             }
             else{
                 std::cout<<"Error Parsing Literal: "+literalDefinition<<std::endl;
-                exit(3);
+                throw AssemblyException();
             }
             //update the literaltable
             literalTable[literal.first].address = locctr.getLocationCounter();
@@ -206,7 +212,7 @@ int SymbolTable::getSymbolValueInt(std::string symbolName)
         std::string addr=  literalTable.at(symbolName).address;
         if(addr==""){
             std::cerr << "Unassigned Literal: " <<symbolName<< std::endl;
-            exit(3);
+            throw AssemblyException();
         }
         return toDec(addr);
     }
@@ -214,7 +220,7 @@ int SymbolTable::getSymbolValueInt(std::string symbolName)
     catch(const std::out_of_range& e)
     {
         std::cerr << "Undefined Symbol: " <<symbolName<< std::endl;
-        exit(3);
+        throw AssemblyException();
     }
 }
 
@@ -239,7 +245,7 @@ bool SymbolTable::isDefined(std::string symbolName)
     catch(const std::out_of_range& e)
     {
         std::cerr << "Undefined Symbol: " <<symbolName<< std::endl;
-        exit(3);
+        throw AssemblyException();
     }
 }
 
@@ -256,5 +262,17 @@ void SymbolTable::writeTable(std::ofstream &symFile){
             absFlag="A";
         }
         symFile<< std::setw(SYM) << std::left <<symbol.first<< "  "<< std::setw(VAL)<< std::left <<toHex(symbol.second.intValue, 6)<< "  "<< std::setw(FLAG)<< std::left<<absFlag<<std::endl;
+    }
+
+    //spacing line between tables
+    symFile<<std::endl;
+
+    //Literal Table Head
+    symFile<< std::setw(NAM) << std::left << "Name"<< "  "<< std::setw(LIT) << std::left <<"Literal"<< "  "<< std::setw(ADDR)<< std::left <<"Address:"<<std::endl;
+    //spacing line
+    symFile<<std::left<<std::string(NAM+LIT+ADDR +6, '-')<<std::endl;
+
+    for (auto literal : literalTable){
+        symFile<< std::setw(NAM) << std::left << literal.first<< "  "<< std::setw(LIT) << std::left <<literal.second.value<< "  "<< std::setw(ADDR)<< std::left <<literal.second.address<<std::endl;
     }
 }

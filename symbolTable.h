@@ -1,3 +1,9 @@
+/**
+ * CS 530, Fall 2023
+ * 11/14/2023
+ * Joseph Vue, RED ID: 820231744
+ */
+
 #ifndef symbolTable_H
 #define symbolTable_H
 
@@ -12,6 +18,7 @@
 #include "hexConverter.h"
 #include <vector>
 #include <fstream>
+#include "assemblerException.h"
 
 //handles functionality related to the symbol table including updating symbol values, getting values, and writing the symbol table to a file
 
@@ -41,6 +48,9 @@ private:
     const int SYM = 6;
     const int VAL = 6;
     const int FLAG = 5;
+    const int NAM = 6;
+    const int LIT = 8;
+    const int ADDR = 10;
 
 public:
   //used to add a new literal to the literal table

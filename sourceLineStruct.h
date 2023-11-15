@@ -1,3 +1,9 @@
+/**
+ * CS 530, Fall 2023
+ * 11/14/2023
+ * Joseph Vue, RED ID: 820231744
+ */
+
 #ifndef sourceLineStruct_H
 #define sourceLineStruct_H
 #include <sstream>
@@ -6,6 +12,7 @@
 #include<iostream>
 #include <iomanip>
 #include <fstream>
+#include "assemblerException.h"
 //used to store the contents of a line of source in assembler relevant variables
 struct sourceLineStruct
 {
@@ -14,6 +21,7 @@ struct sourceLineStruct
     std::string targetAddress; //stores the address the line of source targets
     std::string lineAddress; // the address of the line of source, to be assigned during pass 1
     std::string hexInstruction = "";//the translated operation in hex
+    bool needsModification = false; //whether the value is relative and needs the value of the beginning of the program added to it 
 
     //used to deconstruct a line of source and assign values
     void getLineComponents(std::string sourceLine){
@@ -63,7 +71,7 @@ struct sourceLineStruct
     else{
         std::cout << "Unexpected number of arguments in line of source: "+std::to_string(components.size())<<"\n On Line: "<<cleanedLine<<std::endl;
         //throw "Unexpected number of arguments in line of source: "+ components.size() +"\n";
-        exit(3);
+        throw AssemblyException();
         }
     }
 
@@ -81,10 +89,10 @@ struct sourceLineStruct
     //writes a source line to a given file
     void writeLine(std::ofstream &listingFile){
         if(label!="."){
-            listingFile << std::setw(5) << std::left << lineAddress<< std::setw(8) << std::left << label<< std::setw(7) << std::left << operation<< std::setw(8) << std::left << targetAddress<< std::setw(8) << std::left << hexInstruction<<std::endl;
+            listingFile << std::setw(4) << std::left << lineAddress<<" "<< std::setw(6) << std::left << label<<"  "<< std::setw(8) << std::left << operation<<"  "<< std::setw(10) << std::left << targetAddress<<" "<< std::setw(8) << std::left << hexInstruction<<std::endl;
         }
         else{
-            listingFile << std::setw(5) << std::left << label<< std::left <<operation<<std::endl;
+            listingFile << std::setw(4) << std::left << label <<" "<< std::left <<operation<<std::endl;
         }
     }
 
