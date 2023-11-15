@@ -102,7 +102,7 @@ public:
   void writeTable(std::ofstream &symFile);
 
   //used to account for instructions becoming extended
-  void SymbolTable::incrementAddresses(std::string modAddress);
+  void incrementAddresses(std::string modAddress);
 
 };
 
