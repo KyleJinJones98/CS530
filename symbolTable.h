@@ -10,7 +10,7 @@
 #define symbolTable_H
 
 #include <string>
-#include <map>
+#include <unordered_map>
 #include <iostream>
 #include "sourceLineStruct.h"
 #include <vector>
@@ -44,11 +44,11 @@ class SymbolTable{
     //tracks symbols in the source code
 private:
     int symNumber = 0;
-    std::map<std::string, symbol> symbolTable{
+    std::unordered_map<std::string, symbol> symbolTable{
     };
 
     //tracks literals in the source code
-    std::map<std::string, literal> literalTable{
+    std::unordered_map<std::string, literal> literalTable{
     };
 
     //spacing constants for table writing to file
