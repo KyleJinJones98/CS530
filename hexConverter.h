@@ -12,6 +12,7 @@
 #include <string>
 #include <iomanip>
 #include <iostream>
+#include <stdexcept>
 #include "assemblerException.h"
 
 /*
